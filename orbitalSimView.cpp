@@ -1,8 +1,12 @@
-/*
- * Orbital simulation view
+/**
+ * @file orbitalSimView.cpp
+ * @authors Marc Ressl - Alejandro Heir, Matías Álvarez
+ * @brief Orbital simulation view. Módulo gráfico
+ * @version 0.1
+ * @date 2022-03-09
  *
- * 22.08 EDA
- * Copyright (C) 2022 Marc S. Ressl
+ * @copyright Copyright (c) 2022
+ *
  */
 
 #include <time.h>
@@ -27,7 +31,7 @@ void renderOrbitalSim3D(OrbitalSim *sim)
 {
 	int i;
 
-	for(i = 0; i < sim->bodyNum; i++)
+	for (i = 0; i < sim->bodyNum; i++)
 	{
 		Vector3 position = Vector3Scale(sim->bodysArray[i]->position, 1E-11);
 		Color color = sim->bodysArray[i]->color;
@@ -35,7 +39,7 @@ void renderOrbitalSim3D(OrbitalSim *sim)
 		DrawSphere(position,
 				   logf(sim->bodysArray[i]->radius) * 0.005F,
 				   color);
-		
+
 		DrawPoint3D(position, color);
 	}
 }

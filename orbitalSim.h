@@ -1,8 +1,12 @@
-﻿/*
- * Orbital simulation
+﻿/**
+ * @file orbitalSim.h
+ * @authors Marc Ressl - Alejandro Heir, Matías Álvarez
+ * @brief Orbital simulation. Cálculos astronómicos.
+ * @version 0.1
+ * @date 2022-03-09
  *
- * 22.08 EDA
- * Copyright (C) 2022 Marc S. Ressl
+ * @copyright Copyright (c) 2022
+ *
  */
 
 #ifndef ORBITALSIM_H
@@ -13,20 +17,20 @@
 
 struct OrbitalBody
 {
-    Vector3 position;
-    Vector3 velocity;
+	Vector3 position;
+	Vector3 velocity;
 	Vector3 acceleration;
-    float mass;
-    float radius;
-    Color color;
+	float mass;
+	float radius;
+	Color color;
 };
 
 struct OrbitalSim
 {
-    float timeStep;
-    float time;
-    int bodyNum;
-    OrbitalBody **bodysArray ;
+	float timeStep;
+	float time;
+	int bodyNum;
+	OrbitalBody **bodysArray;
 };
 
 OrbitalSim *makeOrbitalSim(float timeStep);
