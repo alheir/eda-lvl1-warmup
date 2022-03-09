@@ -15,7 +15,7 @@
 // Gets a random value between min and max
 float getRandomFloat(float min, float max)
 {
-    return min + (max - min) * rand() / (float)RAND_MAX;
+	return min + (max - min) * rand() / (float)RAND_MAX;
 }
 
 // Places an asteroid
@@ -23,68 +23,109 @@ float getRandomFloat(float min, float max)
 // centerMass: mass of the most massive object in the star system
 void placeAsteroid(OrbitalBody *body, float centerMass)
 {
-    // Logit distribution
-    float x = getRandomFloat(0, 1);
-    float l = logf(x) - logf(1 - x) + 1;
+	// Logit distribution
+	float x = getRandomFloat(0, 1);
+	float l = logf(x) - logf(1 - x) + 1;
 
-    // https://mathworld.wolfram.com/DiskPointPicking.html
-    float r = ASTEROIDS_MEAN_RADIUS * sqrtf(fabs(l));
-    float phi = getRandomFloat(0, 2 * 3.14);
+	// https://mathworld.wolfram.com/DiskPointPicking.html
+	float r = ASTEROIDS_MEAN_RADIUS * sqrtf(fabs(l));
+	float phi = getRandomFloat(0, 2 * 3.14);
 
-    // Surprise!
-    // phi = 0;
+	// Surprise!
+	// phi = 0;
 
-    // https://en.wikipedia.org/wiki/Circular_orbit#Velocity
-    float v = sqrtf(GRAVITATIONAL_CONSTANT * centerMass / r) * getRandomFloat(0.6F, 1.2F);
-    float vy = getRandomFloat(-1E2F, 1E2F);
+	// https://en.wikipedia.org/wiki/Circular_orbit#Velocity
+	float v = sqrtf(GRAVITATIONAL_CONSTANT * centerMass / r) * getRandomFloat(0.6F, 1.2F);
+	float vy = getRandomFloat(-1E2F, 1E2F);
 
-    // Fill in with your own fields:
-    // body->mass = 1E12F;  // Typical asteroid weight: 1 billion tons
-    // body->radius = 2E3F; // Typical asteroid radius: 2km
-    // body->color = GRAY;
-    // body->position = {r * cosf(phi), 0, r * sinf(phi)};
-    // body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};
+	// Fill in with your own fields:
+	// body->mass = 1E12F;  // Typical asteroid weight: 1 billion tons
+	// body->radius = 2E3F; // Typical asteroid radius: 2km
+	// body->color = GRAY;
+	// body->position = {r * cosf(phi), 0, r * sinf(phi)};
+	// body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};
 }
-
 
 // Make an orbital simulation
 OrbitalSim *makeOrbitalSim(float timeStep)
 {
-    OrbitalBody **bodies = (OrbitalBody**)malloc(SOLARSYSTEM_BODYNUM * sizeof(OrbitalBody*));
+	OrbitalBody **bodies = (OrbitalBody **)malloc(SOLARSYSTEM_BODYNUM * sizeof(OrbitalBody *));
 
-    int i;
-    for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
-    {
-        bodies[i] = (OrbitalBody*) malloc(sizeof(OrbitalBody));
-        bodies[i]->color = solarSystem[i].color;
-        bodies[i]->mass = solarSystem[i].mass;
-        bodies[i]->velocity = solarSystem[i].velocity;
-        bodies[i]->position = solarSystem[i].position;
-        bodies[i]->radius = solarSystem[i].radius;
-    }
+	int i;
+	for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
+	{
+		bodies[i] = (OrbitalBody *)malloc(sizeof(OrbitalBody));
 
-    OrbitalSim *temp = (OrbitalSim *) malloc(sizeof(OrbitalSim));
+		*(bodies[i]) = {solarSystem[i].position,
+						solarSystem[i].velocity,
+						{0, 0, 0},
+						solarSystem[i].mass,
+						solarSystem[i].radius,
+						solarSystem[i].color};
+	}
 
-    temp->timeStep  = timeStep;
-    temp->time = 0;
-    temp->bodyNum = SOLARSYSTEM_BODYNUM;
-    temp->bodysArray = bodies;
+	OrbitalSim *tempOrbitalSim = (OrbitalSim *)malloc(sizeof(OrbitalSim));
+	*tempOrbitalSim = {timeStep, 0, SOLARSYSTEM_BODYNUM, bodies};
 
-    return temp;
+	return tempOrbitalSim;
 }
 
 // Simulates a timestep
 void updateOrbitalSim(OrbitalSim *sim)
 {
+	int i, j;
+
+	// Se pasa por cada body y se le calcula su aceleración en base a la masa de los otros.
+	for (i = 0; i < sim->bodyNum; i++)
+	{
+
+		Vector3 targetBodyPosition = sim->bodysArray[i]->position;
+		sim->bodysArray[i]->acceleration = {0, 0, 0};
+
+		for (j = 0; j < i; j++)
+		{
+
+			if (j == i)
+				continue;
+
+			// Parte adimencional de fuerza gravitatoria, omitiendo la masa del targetBody
+			float scalar = (-1) * GRAVITATIONAL_CONSTANT * sim->bodysArray[j]->mass *
+						   (1 / pow(Vector3Length(Vector3Subtract(targetBodyPosition,
+																  sim->bodysArray[j]->position)),
+									3));
+
+			// Cálculo y acumulación de aceleración
+			sim->bodysArray[i]->acceleration = Vector3Add(sim->bodysArray[i]->acceleration,
+														  Vector3Scale(Vector3Subtract(targetBodyPosition,
+																					   sim->bodysArray[j]->position),
+																	   scalar));
+		}
+	}
+
+	float timeStep = sim->timeStep;
+
+	// Se integra discretamente la aceleración, para obtener velocidad y posición
+	for (i = 0; i < sim->bodyNum; i++)
+	{
+		sim->bodysArray[i]->velocity = Vector3Add(sim->bodysArray[i]->velocity,
+												  Vector3Scale(sim->bodysArray[i]->acceleration,
+															   timeStep));
+
+		sim->bodysArray[i]->position = Vector3Add(sim->bodysArray[i]->position,
+												  Vector3Scale(sim->bodysArray[i]->velocity,
+															   timeStep));
+	}
 }
 
 void freeOrbitalSim(OrbitalSim *sim)
 {
-    int i;
-    for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
-    {
-        free(sim->bodysArray[i]);
-    }
-    free(sim->bodysArray);
-    free(sim);
+	int i;
+
+	for (i = 0; i < sim->bodyNum; i++)
+	{
+		free(sim->bodysArray[i]);
+	}
+
+	free(sim->bodysArray);
+	free(sim);
 }
