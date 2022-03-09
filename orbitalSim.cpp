@@ -7,6 +7,7 @@
 
 #include "orbitalSim.h"
 #include "ephemerides.h"
+#include <stdlib.h>
 
 #define GRAVITATIONAL_CONSTANT 6.6743E-11F
 #define ASTEROIDS_MEAN_RADIUS 4E11F
@@ -28,7 +29,7 @@ void placeAsteroid(OrbitalBody *body, float centerMass)
 
     // https://mathworld.wolfram.com/DiskPointPicking.html
     float r = ASTEROIDS_MEAN_RADIUS * sqrtf(fabs(l));
-    float phi = getRandomFloat(0, 2 * M_PI);
+    float phi = getRandomFloat(0, 2 * 3.14);
 
     // Surprise!
     // phi = 0;
@@ -45,21 +46,45 @@ void placeAsteroid(OrbitalBody *body, float centerMass)
     // body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};
 }
 
+
 // Make an orbital simulation
 OrbitalSim *makeOrbitalSim(float timeStep)
 {
-    // Your code goes here...
+    OrbitalBody **bodies = (OrbitalBody**)malloc(SOLARSYSTEM_BODYNUM * sizeof(OrbitalBody*));
 
-    return NULL; // Replace...
+    int i;
+    for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
+    {
+        bodies[i] = (OrbitalBody*) malloc(sizeof(OrbitalBody));
+        bodies[i]->color = solarSystem[i].color;
+        bodies[i]->mass = solarSystem[i].mass;
+        bodies[i]->velocity = solarSystem[i].velocity;
+        bodies[i]->position = solarSystem[i].position;
+        bodies[i]->radius = solarSystem[i].radius;
+    }
+
+    OrbitalSim *temp = (OrbitalSim *) malloc(sizeof(OrbitalSim));
+
+    temp->timeStep  = timeStep;
+    temp->time = 0;
+    temp->bodyNum = SOLARSYSTEM_BODYNUM;
+    temp->bodysArray = bodies;
+
+    return temp;
 }
 
 // Simulates a timestep
 void updateOrbitalSim(OrbitalSim *sim)
 {
-    // Your code goes here...
 }
 
 void freeOrbitalSim(OrbitalSim *sim)
 {
-    // Your code goes here...
+    int i;
+    for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
+    {
+        free(sim->bodysArray[i]);
+    }
+    free(sim->bodysArray);
+    free(sim);
 }

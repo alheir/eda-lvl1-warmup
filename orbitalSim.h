@@ -13,12 +13,19 @@
 
 struct OrbitalBody
 {
-    // Your code goes here...
+    Vector3 position;
+    Vector3 velocity;
+    float mass;
+    float radius;
+    Color color;
 };
 
 struct OrbitalSim
 {
-    // Your code goes here...
+    float timeStep;
+    float time;
+    int bodyNum;
+    OrbitalBody **bodysArray ;
 };
 
 OrbitalSim *makeOrbitalSim(float timeStep);
