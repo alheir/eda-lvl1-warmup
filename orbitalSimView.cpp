@@ -47,5 +47,5 @@ void renderOrbitalSim3D(OrbitalSim *sim)
 void renderOrbitalSim2D(OrbitalSim *sim)
 {
 	DrawFPS(0, 0);
-	DrawText(getISODate(time(NULL)), 0, 20, 10, GOLD);
+	DrawText(getISODate(sim->time), 0, 20, 10, GOLD);
 }

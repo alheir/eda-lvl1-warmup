@@ -86,6 +86,8 @@ void updateOrbitalSim(OrbitalSim *sim)
 {
 	int i, j;
 
+	sim->time += sim->timeStep;
+
 	// Se pasa por cada body y se le calcula su aceleración en base a la masa de los otros.
 	for (i = 0; i < sim->bodyNum; i++)
 	{
