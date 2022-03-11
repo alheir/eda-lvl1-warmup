@@ -50,33 +50,60 @@ void placeAsteroid(OrbitalBody *body, float centerMass)
 	float vy = getRandomFloat(-1E2F, 1E2F);
 
 	// Fill in with your own fields:
-	// body->mass = 1E12F;  // Typical asteroid weight: 1 billion tons
-	// body->radius = 2E3F; // Typical asteroid radius: 2km
-	// body->color = GRAY;
-	// body->position = {r * cosf(phi), 0, r * sinf(phi)};
-	// body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};
+	body->mass = 1E12F;	 // Typical asteroid weight: 1 billion tons
+	body->radius = 2E3F; // Typical asteroid radius: 2km
+	body->color = GRAY;
+	body->position = {r * cosf(phi), 0, r * sinf(phi)};
+	body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};
 }
 
 // Make an orbital simulation
 OrbitalSim *makeOrbitalSim(float timeStep)
 {
-	OrbitalBody **bodies = (OrbitalBody **)malloc(SOLARSYSTEM_BODYNUM * sizeof(OrbitalBody *));
-
 	int i;
-	for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
-	{
-		bodies[i] = (OrbitalBody *)malloc(sizeof(OrbitalBody));
+	OrbitalSim *tempOrbitalSim = NULL;
+	OrbitalBody **bodies = NULL;
+	const int asteroids = 100;
+	const int bodyNum = SOLARSYSTEM_BODYNUM + asteroids;
 
-		*(bodies[i]) = {solarSystem[i].position,
-						solarSystem[i].velocity,
-						{0, 0, 0},
-						solarSystem[i].mass,
-						solarSystem[i].radius,
-						solarSystem[i].color};
+	if (!(tempOrbitalSim = (OrbitalSim *)malloc(sizeof(OrbitalSim))))
+		return NULL;
+	if (!(bodies = (OrbitalBody **)malloc(bodyNum * sizeof(OrbitalBody *))))
+	{
+		free(tempOrbitalSim);
+		return NULL;
 	}
 
-	OrbitalSim *tempOrbitalSim = (OrbitalSim *)malloc(sizeof(OrbitalSim));
-	*tempOrbitalSim = {timeStep, 0, SOLARSYSTEM_BODYNUM, bodies};
+	*tempOrbitalSim = {timeStep, 0, bodyNum, bodies};
+
+	for (i = 0; i < tempOrbitalSim->bodyNum; i++)
+	{
+		if (!(bodies[i] = (OrbitalBody *)malloc(sizeof(OrbitalBody))))
+		{
+			int j;
+			for (j = 0; j < i; j++)
+				free(bodies[j]);
+			free(bodies);
+			free(tempOrbitalSim);
+
+			return NULL;
+		}
+
+		if (i < SOLARSYSTEM_BODYNUM)
+		{
+			*(bodies[i]) = {solarSystem[i].position,
+							solarSystem[i].velocity,
+							{0, 0, 0},
+							solarSystem[i].mass,
+							solarSystem[i].radius,
+							solarSystem[i].color};
+		}
+
+		else
+		{
+			placeAsteroid(bodies[i], bodies[0]->mass);
+		}
+	}
 
 	return tempOrbitalSim;
 }

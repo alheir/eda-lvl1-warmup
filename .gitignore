@@ -3,6 +3,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,c,visualstudiocode,visualstudio,cmake
 
 build
+.vscode
 
 ### C ###
 # Prerequisites

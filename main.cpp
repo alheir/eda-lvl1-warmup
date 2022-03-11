@@ -11,6 +11,7 @@
 
 #include "orbitalSim.h"
 #include "orbitalSimView.h"
+#include <stdio.h>
 
 #define SECONDS_PER_DAY 86400.0F
 
@@ -38,6 +39,13 @@ int main()
 	float timeStep = timeMultiplier / fps;
 
 	OrbitalSim *sim = makeOrbitalSim(timeStep);
+
+	if (!sim)
+	{
+		printf("No se pudo inicializar orbitalSim...\n");
+		CloseWindow();
+		return 1;
+	}
 
 	// Game loop
 	while (!WindowShouldClose())
