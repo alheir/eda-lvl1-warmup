@@ -7,10 +7,17 @@
  *
  * @copyright Copyright (c) 2022
  *
+ * Sobre uso de floats: considerando que la masa del Sol (la mayor empleada) ronda los 1.9*10^30kg, es claro
+ * 		que no se puede usar un tipo de dato entero como int o long int, cuyos rangos máximos se encuentran
+ * 		claramente por debajo. Con float de 32bits, se puede llegar hasta aproximadamente 3.4*10^38, lo
+ * 		cual es suficiente para representar, en este caso, masas astronómicas.
  *
- * Sobre uso de floats:
+ * 		Observamos que el tipo de dato Vector3 de raylib implementa vectores con float, por lo que consideramos que tendrá la presición y rango necesarios. Además, la información
+ * 		proveída en ephemerides.h ya venía con masas, posiciones y velocidades con tipo de dato float.
  *
- * Sobre simulación lenta y complejidad algorítmica:
+ * Sobre simulación lenta y complejidad algorítmica: la "peor" complejidad está en la lógica de
+ * 		updateOrbitalSim, en donde el doble for causa una O(n^2). Se repiten cálculos "innecesarios", o más
+ * 		bien, se hacen cálculos iguales y opuestos a cálculos previos.
  *
  * Sobre solución de lo anterior:
  *
