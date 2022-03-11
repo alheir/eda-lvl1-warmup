@@ -34,10 +34,11 @@ int main()
 	SetCameraPanControl(MOUSE_BUTTON_LEFT);
 
 	// Orbital simulation
-	float fps = 720.0F;							  // frames per second
-	float timeMultiplier = 100 * SECONDS_PER_DAY; // Simulation speed: 100 days per real second
+	float fps = 60.0F;							 	// frames per second
+	SetTargetFPS(fps + 1);							// maximos fps para raylib
+	float timeMultiplier = 100 * SECONDS_PER_DAY; 	// Simulation speed: 100 days per real second
 	float timeStep = timeMultiplier / fps;
-
+	
 	OrbitalSim *sim = makeOrbitalSim(timeStep);
 
 	if (!sim)

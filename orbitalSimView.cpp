@@ -34,10 +34,12 @@ void renderOrbitalSim3D(OrbitalSim *sim)
 	for (i = 0; i < sim->bodyNum; i++)
 	{
 		Vector3 position = Vector3Scale(sim->bodysArray[i]->position, 1E-11);
+		float radius = logf(sim->bodysArray[i]->radius) * 0.005F;
 		Color color = sim->bodysArray[i]->color;
+		
 
 		DrawSphere(position,
-				   logf(sim->bodysArray[i]->radius) * 0.005F,
+				   radius,
 				   color);
 
 		DrawPoint3D(position, color);

@@ -26,6 +26,7 @@
 #include "orbitalSim.h"
 #include "ephemerides.h"
 #include <stdlib.h>
+#include <string.h>
 
 #define GRAVITATIONAL_CONSTANT 6.6743E-11F
 #define ASTEROIDS_MEAN_RADIUS 4E11F
@@ -70,7 +71,7 @@ OrbitalSim *makeOrbitalSim(float timeStep)
 	int i;
 	OrbitalSim *tempOrbitalSim = NULL;
 	OrbitalBody **bodies = NULL;
-	const int asteroids = 100;
+	const int asteroids = 1000;
 	const int bodyNum = SOLARSYSTEM_BODYNUM + asteroids;
 
 	if (!(tempOrbitalSim = (OrbitalSim *)malloc(sizeof(OrbitalSim))))
@@ -122,47 +123,46 @@ void updateOrbitalSim(OrbitalSim *sim)
 
 	sim->time += sim->timeStep;
 
+	for (i = 0; i < sim->bodyNum; i++)
+		sim->bodysArray[i]->acceleration = {0, 0, 0};
+
 	// Se pasa por cada body y se le calcula su aceleración en base a la masa de los otros.
 	for (i = 0; i < sim->bodyNum; i++)
 	{
-
-		Vector3 targetBodyPosition = sim->bodysArray[i]->position;
-		sim->bodysArray[i]->acceleration = {0, 0, 0};
-
-		for (j = 0; j < sim->bodyNum; j++)
+		for (j = i + 1; j < sim->bodyNum - 1; j++)
 		{
+			Vector3 vectorDiff = Vector3Subtract(sim->bodysArray[i]->position,
+												 sim->bodysArray[j]->position);
 
-			if (j == i)
-				continue;
+			float vectorLen = Vector3Length(vectorDiff);
 
-			// Parte adimencional de fuerza gravitatoria, omitiendo la masa del targetBody
-			float scalar = (-1) * GRAVITATIONAL_CONSTANT * sim->bodysArray[j]->mass *
-						   (1 / pow(Vector3Length(Vector3Subtract(targetBodyPosition,
-																  sim->bodysArray[j]->position)),
-									3));
+			double scalar = (-1) * GRAVITATIONAL_CONSTANT * sim->bodysArray[j]->mass *
+						   (1 / (vectorLen * vectorLen * vectorLen));
 
-			// Cálculo y acumulación de aceleración
+			Vector3 vectorial = Vector3Scale(vectorDiff,
+											 scalar);
+
 			sim->bodysArray[i]->acceleration = Vector3Add(sim->bodysArray[i]->acceleration,
-														  Vector3Scale(Vector3Subtract(targetBodyPosition,
-																					   sim->bodysArray[j]->position),
-																	   scalar));
+														  vectorial);
+
+			sim->bodysArray[j]->acceleration = Vector3Add(sim->bodysArray[j]->acceleration,
+														  Vector3Scale(Vector3Negate(vectorial),
+																	   (sim->bodysArray[i]->mass/sim->bodysArray[j]->mass)));
 		}
 	}
-
-	float timeStep = sim->timeStep;
 
 	// Se integra discretamente la aceleración, para obtener velocidad y posición
 	for (i = 0; i < sim->bodyNum; i++)
 	{
 		Vector3 velocity = Vector3Add(sim->bodysArray[i]->velocity,
-												  Vector3Scale(sim->bodysArray[i]->acceleration,
-															   timeStep));
+									  Vector3Scale(sim->bodysArray[i]->acceleration,
+												   sim->timeStep));
 
 		sim->bodysArray[i]->velocity = velocity;
 
 		sim->bodysArray[i]->position = Vector3Add(sim->bodysArray[i]->position,
 												  Vector3Scale(velocity,
-															   timeStep));
+															   sim->timeStep));
 	}
 }
 
@@ -171,9 +171,7 @@ void freeOrbitalSim(OrbitalSim *sim)
 	int i;
 
 	for (i = 0; i < sim->bodyNum; i++)
-	{
 		free(sim->bodysArray[i]);
-	}
 
 	free(sim->bodysArray);
 	free(sim);
