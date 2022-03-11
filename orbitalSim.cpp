@@ -95,7 +95,7 @@ void updateOrbitalSim(OrbitalSim *sim)
 		Vector3 targetBodyPosition = sim->bodysArray[i]->position;
 		sim->bodysArray[i]->acceleration = {0, 0, 0};
 
-		for (j = 0; j < i; j++)
+		for (j = 0; j < sim->bodyNum; j++)
 		{
 
 			if (j == i)
@@ -120,12 +120,14 @@ void updateOrbitalSim(OrbitalSim *sim)
 	// Se integra discretamente la aceleración, para obtener velocidad y posición
 	for (i = 0; i < sim->bodyNum; i++)
 	{
-		sim->bodysArray[i]->velocity = Vector3Add(sim->bodysArray[i]->velocity,
+		Vector3 velocity = Vector3Add(sim->bodysArray[i]->velocity,
 												  Vector3Scale(sim->bodysArray[i]->acceleration,
 															   timeStep));
 
+		sim->bodysArray[i]->velocity = velocity;
+
 		sim->bodysArray[i]->position = Vector3Add(sim->bodysArray[i]->position,
-												  Vector3Scale(sim->bodysArray[i]->velocity,
+												  Vector3Scale(velocity,
 															   timeStep));
 	}
 }
