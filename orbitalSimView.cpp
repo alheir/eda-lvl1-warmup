@@ -33,21 +33,22 @@ void renderOrbitalSim3D(OrbitalSim *sim)
 
 	for (i = 0; i < sim->bodyNum; i++)
 	{
-		Vector3 position = Vector3Scale(sim->bodysArray[i]->position, 1E-11);
-		float radius = logf(sim->bodysArray[i]->radius) * 0.005F;
-		Color color = sim->bodysArray[i]->color;
 		
+		Vector3 position = Vector3Scale(sim->bodies[i]->position, 1E-11F);
+		float radius = logf(sim->bodies[i]->radius) * 0.005F;
+		Color color = sim->bodies[i]->color;
 
 		DrawSphere(position,
 				   radius,
 				   color);
 
 		DrawPoint3D(position, color);
+		
 	}
 }
 
 void renderOrbitalSim2D(OrbitalSim *sim)
 {
 	DrawFPS(0, 0);
-	DrawText(getISODate(sim->time), 0, 20, 10, GOLD);
+	DrawText(getISODate(sim->time), 0, 20, 12, GOLD);
 }

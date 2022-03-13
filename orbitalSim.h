@@ -15,6 +15,16 @@
 #include "raylib.h"
 #include "raymath.h"
 
+enum PLANETARY_SYSTEMS
+{
+	SOLAR,
+	ALPHACENTAURI
+};
+
+#define CHOSEN_SYSTEM SOLAR
+#define BLACK_HOLE
+#define ASTEROIDS_NUM 500
+
 struct OrbitalBody
 {
 	Vector3 position;
@@ -29,8 +39,9 @@ struct OrbitalSim
 {
 	float timeStep;
 	float time;
+	int bodyNumCore;
 	int bodyNum;
-	OrbitalBody **bodysArray;
+	OrbitalBody **bodies;
 };
 
 OrbitalSim *makeOrbitalSim(float timeStep);

@@ -27,7 +27,7 @@ int main()
 	camera.position = {10.0f, 10.0f, 10.0f};
 	camera.target = {0.0f, 0.0f, 0.0f};
 	camera.up = {0.0f, 1.0f, 0.0f};
-	camera.fovy = 45.0f;
+	camera.fovy = 60.0f;
 	camera.projection = CAMERA_PERSPECTIVE;
 	SetCameraMode(camera, CAMERA_FREE);
 
@@ -35,7 +35,6 @@ int main()
 
 	// Orbital simulation
 	float fps = 60.0F;							 	// frames per second
-	SetTargetFPS(fps + 1);							// maximos fps para raylib
 	float timeMultiplier = 100 * SECONDS_PER_DAY; 	// Simulation speed: 100 days per real second
 	float timeStep = timeMultiplier / fps;
 	
@@ -47,6 +46,8 @@ int main()
 		CloseWindow();
 		return 1;
 	}
+
+	SetTargetFPS(fps);	// set max fps for raylib
 
 	// Game loop
 	while (!WindowShouldClose())
