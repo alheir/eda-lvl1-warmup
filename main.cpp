@@ -24,12 +24,12 @@ int main()
 
     // Camera
     Camera3D camera;
-    camera.position = {10.0f, 10.0f, 10.0f};
-    camera.target = {0.0f, 0.0f, 0.0f};
-    camera.up = {0.0f, 1.0f, 0.0f};
+    camera.position = {10.0f, 4.0f, 10.0f};
+    camera.target = {250.0f, -15.0f, 0.0f};
+    camera.up = {0.0f, 0.5, 0.0f};
     camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
-    SetCameraMode(camera, CAMERA_FREE);
+    SetCameraMode(camera, CAMERA_FIRST_PERSON);
 
     SetCameraPanControl(MOUSE_BUTTON_LEFT);
 
@@ -48,7 +48,6 @@ int main()
     }
 
     SetTargetFPS(fps); // set max fps for raylib
-    // SetConfigFlags(FLAG_VSYNC_HINT);
 
     // Game loop
     while (!WindowShouldClose())

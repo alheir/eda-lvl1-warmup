@@ -57,7 +57,7 @@ enum ASTEROIDS_COLORS
 };
 
 #define CHOSEN_SYSTEM SOLAR // see PLANTEARY_SYSTEMS enum
-#define ASTEROIDS_NUM 10000
+#define ASTEROIDS_NUM 5000
 
 #define TWEAK_JUPITER_MASS false // true or false
 #define JUPITER_ID 5
