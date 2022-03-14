@@ -17,31 +17,37 @@
 
 enum PLANETARY_SYSTEMS
 {
-	SOLAR,
-	ALPHACENTAURI
+    SOLAR,
+    ALPHACENTAURI
 };
 
-#define CHOSEN_SYSTEM SOLAR
-#define BLACK_HOLE
+#define CHOSEN_SYSTEM SOLAR // see PLANTEARY_SYSTEMS num
 #define ASTEROIDS_NUM 500
+
+#define TWEAK_JUPITER_MASS false // true or false
+#define JUPITER_ID 5
+#define TWEAK_JUPITER_MASS_FACTOR 1000 // veces de la masa de Júpiter
+
+//#define BLACK_HOLE // comment or uncomment
+#define BLACK_HOLE_MASS_FACTOR 10000 // veces de la masa mayor del sistema
 
 struct OrbitalBody
 {
-	Vector3 position;
-	Vector3 velocity;
-	Vector3 acceleration;
-	float mass;
-	float radius;
-	Color color;
+    Vector3 position;
+    Vector3 velocity;
+    Vector3 acceleration;
+    float mass;
+    float radius;
+    Color color;
 };
 
 struct OrbitalSim
 {
-	float timeStep;
-	float time;
-	int bodyNumCore;
-	int bodyNum;
-	OrbitalBody **bodies;
+    float timeStep;
+    float time;
+    int bodyNumCore;
+    int bodyNum;
+    OrbitalBody **bodies;
 };
 
 OrbitalSim *makeOrbitalSim(float timeStep);
