@@ -48,7 +48,7 @@ int main()
     }
 
     SetTargetFPS(fps); // set max fps for raylib
-    //SetConfigFlags(FLAG_VSYNC_HINT);
+    // SetConfigFlags(FLAG_VSYNC_HINT);
 
     // Game loop
     while (!WindowShouldClose())

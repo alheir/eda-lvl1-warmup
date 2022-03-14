@@ -13,6 +13,10 @@
 
 #include "orbitalSimView.h"
 
+const char *getISODate(float currentTime);
+void renderOrbitalSim3D(OrbitalSim *sim);
+void renderOrbitalSim2D(OrbitalSim *sim);
+
 const char *getISODate(float currentTime)
 {
     // Epoch: 2022-01-01
@@ -38,13 +42,12 @@ void renderOrbitalSim3D(OrbitalSim *sim)
         float radius = logf(sim->bodies[i]->radius) * 0.005F;
         Color color = sim->bodies[i]->color;
 
-        /*
-        Solo se dibujan esferas para los cuerpos principales del sistema, pues
-        los asteriodes tienen masa insignificante frente a los cuerpos del sistema.
-        
-        Referencias:
-            -Ayudante Martín Zahnd
-        */
+        // Solo se dibujan esferas para los cuerpos principales del sistema, pues
+        // los asteriodes tienen masa insignificante frente a los cuerpos del sistema.
+        //
+        // Referencias:
+        //     -Ayudante Martín Zahnd
+
         if (i < sim->bodyNumCore)
         {
             DrawSphere(position,

@@ -39,6 +39,12 @@ float getRandomFloat(float min, float max)
     return min + (max - min) * rand() / (float)RAND_MAX;
 }
 
+// Gets a random unsigned char value between min and max
+unsigned char getRandomUChar(unsigned char min, unsigned max)
+{
+    return min + (max - min) * rand() / (unsigned char)RAND_MAX;
+}
+
 // Places an asteroid
 //
 // centerMass: mass of the most massive object in the star system
@@ -60,11 +66,19 @@ void placeAsteroid(OrbitalBody *body, float centerMass)
     float vy = getRandomFloat(-1E2F, 1E2F);
 
     // Fill in with your own fields:
-    // body->mass = 1E12F;	 // Typical asteroid weight: 1 billion tons
-    // body->radius = 2E3F; // Typical asteroid radius: 2km
-    body->mass = getRandomFloat(1E9F, 1E15F);
-    body->radius = getRandomFloat(2E2F, 2E4F);
-    body->color = GRAY;
+    body->mass = 1E12F;  // Typical asteroid weight: 1 billion tons
+    body->radius = 2E3F; // Typical asteroid radius: 2km
+
+    if (PARTY_TIME)
+    {
+        body->color = (Color){getRandomUChar(0, 255), getRandomUChar(0, 255), getRandomUChar(0, 255), 126};
+    }
+
+    else
+    {
+        body->color = GRAY;
+    }
+
     body->position = {r * cosf(phi), 0, r * sinf(phi)};
     body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};
 }
@@ -104,8 +118,8 @@ OrbitalSim *makeOrbitalSim(float timeStep)
     systemBodyNumCore++;
     systemBodyNum++;
 
-    const OrbitalBody blacky = {solarSystem[0].position,
-                                solarSystem[5].velocity,
+    const OrbitalBody blacky = {Vector3Subtract(solarSystem[3].position, solarSystem[6].position),
+                                Vector3Scale(solarSystem[5].velocity, -1),
                                 Vector3Zero(),
                                 systemInfo[0].mass * BLACK_HOLE_MASS_FACTOR,
                                 systemInfo[0].radius,
@@ -127,7 +141,7 @@ OrbitalSim *makeOrbitalSim(float timeStep)
         if (!(bodies[i] = (OrbitalBody *)malloc(sizeof(OrbitalBody))))
         {
             int j;
-            for (j = 0; j < i; j++)
+            for (j = 0; j < i - 1; j++)
                 free(bodies[j]);
 
             free(bodies);
@@ -141,13 +155,33 @@ OrbitalSim *makeOrbitalSim(float timeStep)
         {
 
 #ifdef BLACK_HOLE
+
+            // Se coloca al blackhole como primer cuerpo del sistema,
+            // debiendo alterar los índices.
+
             if (!i)
             {
                 *(bodies[0]) = blacky;
-                continue;
             }
-#endif
 
+            else
+            {
+                *(bodies[i]) = {systemInfo[i - 1].position,
+                                systemInfo[i - 1].velocity,
+                                Vector3Zero(),
+                                systemInfo[i - 1].mass,
+                                systemInfo[i - 1].radius,
+                                systemInfo[i - 1].color};
+            }
+        }
+
+        else
+        {
+            placeAsteroid(bodies[i], bodies[1]->mass);
+        }
+    }
+
+#else
             *(bodies[i]) = {systemInfo[i].position,
                             systemInfo[i].velocity,
                             Vector3Zero(),
@@ -161,6 +195,7 @@ OrbitalSim *makeOrbitalSim(float timeStep)
             placeAsteroid(bodies[i], bodies[0]->mass);
         }
     }
+#endif
 
     return tempOrbitalSim;
 }
@@ -172,41 +207,19 @@ void updateOrbitalSim(OrbitalSim *sim)
 
     sim->time += sim->timeStep;
 
-    /*
-    for (i = 0; i < sim->bodyNum; i++)
-    {
-
-        Vector3 targetBodyPosition = sim->bodies[i]->position;
-        sim->bodies[i]->acceleration = Vector3Zero();
-
-        for (j = 0; j < i; j++)
-        {
-
-            if (j == i)
-                continue;
-
-            float vectorLen = Vector3Length(Vector3Subtract(targetBodyPosition, sim->bodies[j]->position));
-
-            // Parte adimencional de fuerza gravitatoria, omitiendo la masa del targetBody
-            float scalar = (-1) * GRAVITATIONAL_CONSTANT * sim->bodies[j]->mass *
-                           (1 / (vectorLen * vectorLen));
-
-            // Cálculo y acumulación de aceleración
-            sim->bodies[i]->acceleration = Vector3Add(sim->bodies[i]->acceleration,
-                                                      Vector3Scale(Vector3Subtract(targetBodyPosition,
-                                                                                   sim->bodies[j]->position),
-                                                                   scalar / vectorLen));
-        }
-    }
-    */
-
     for (i = 0; i < sim->bodyNum; i++)
     {
         sim->bodies[i]->acceleration = Vector3Zero();
     }
 
-    // Se pasa por cada body y se le calcula su aceleración en base a la masa de los otros.
-    for (i = 0; i < sim->bodyNum; i++)
+    // Se calculan las fuerzas gravitacionales entre cuerpos, considerando solo las masas
+    // de planetas y estrellas como "fuentes gravitacionales", ignorando efectos de
+    // otros cuerpos menores.
+    //
+    // Referencias:
+    //     -Ayudante Martín Zahnd
+
+    for (i = 0; i < sim->bodyNumCore; i++)
     {
         for (j = i + 1; j < sim->bodyNum; j++)
         {
