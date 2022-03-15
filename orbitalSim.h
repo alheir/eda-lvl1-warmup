@@ -27,15 +27,7 @@ enum PLANETARY_SYSTEMS
     ALPHACENTAURI
 };
 
-enum ASTEROIDS_COLORS
-{
-    PARTY,
-    BOKE,
-    MESSI,
-    DEFAULT
-};
-
-#define CHOSEN_SYSTEM SOLAR // see PLANTEARY_SYSTEMS enum
+#define CHOSEN_SYSTEM ALPHACENTAURI // see PLANTEARY_SYSTEMS enum
 #define ASTEROIDS_NUM 10000
 
 #define TWEAK_JUPITER_MASS false // true or false
@@ -45,8 +37,7 @@ enum ASTEROIDS_COLORS
 #define BLACK_HOLE false             // true or false
 #define BLACK_HOLE_MASS_FACTOR 10000 // veces de la masa mayor del sistema
 
-#define CHOSEN_ASTEROIDS_COLOR MESSI // see ASTEROIDS_COLORS enum
-
+#define PARTY_TIME true  // true or false
 /**********************************************************************/
 /**************************ARCHITECT'S CONSOLE*************************/
 /**********************************************************************/
