@@ -35,8 +35,8 @@ enum ASTEROIDS_COLORS
     DEFAULT
 };
 
-#define CHOSEN_SYSTEM ALPHACENTAURI // see PLANTEARY_SYSTEMS enum
-#define ASTEROIDS_NUM 5000
+#define CHOSEN_SYSTEM SOLAR // see PLANTEARY_SYSTEMS enum
+#define ASTEROIDS_NUM 10000
 
 #define TWEAK_JUPITER_MASS false // true or false
 #define JUPITER_ID 5
@@ -45,7 +45,7 @@ enum ASTEROIDS_COLORS
 #define BLACK_HOLE false             // true or false
 #define BLACK_HOLE_MASS_FACTOR 10000 // veces de la masa mayor del sistema
 
-#define CHOSEN_ASTEROIDS_COLORS 1 // see ASTEROIDS_COLORS enum
+#define CHOSEN_ASTEROIDS_COLOR MESSI // see ASTEROIDS_COLORS enum
 
 /**********************************************************************/
 /**************************ARCHITECT'S CONSOLE*************************/

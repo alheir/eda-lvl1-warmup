@@ -77,30 +77,28 @@ void placeAsteroid(OrbitalBody *body, float centerMass)
     body->radius = 2E3F; // Typical asteroid radius: 2km
     body->position = { r * cosf(phi), 0, r * sinf(phi) };
 
-    if (CHOSEN_ASTEROIDS_COLORS == PARTY)
-        body->color = {getRandomUChar(0, 255), getRandomUChar(0, 255), getRandomUChar(0, 255), 126};
-
-    if (CHOSEN_ASTEROIDS_COLORS == BOKE)
+    switch (CHOSEN_ASTEROIDS_COLOR)
     {
+    case PARTY:
+        body->color = {getRandomUChar(0, 255), getRandomUChar(0, 255), getRandomUChar(0, 255), 126};
+        break;
+
+    case BOKE:
+        body->color = GRAY;
+        break;
+
+    case MESSI:
         if (body->position.x <= solarSystem[3].position.x)
             body->color = BLUE;
 
         else
             body->color = YELLOW;
-    }
 
-    if (CHOSEN_ASTEROIDS_COLORS == MESSI)
-    {
-        if (body->position.x <= solarSystem[3].position.x)
-            body->color = WHITE;
-
-        else
-            body->color = SKYBLUE;
-    }
-
-    else
-    {
+        break;
+    
+    default:
         body->color = GRAY;
+        break;
     }
 
     body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};

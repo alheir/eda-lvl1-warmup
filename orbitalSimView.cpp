@@ -14,6 +14,9 @@
 
 #include "orbitalSimView.h"
 
+// Agregado para conocer la ARCHITECT'S CONSOLE, para mostrar datos en pantalla
+#include "orbitalSim.h"
+
 const char *getISODate(float currentTime);
 void renderOrbitalSim3D(OrbitalSim *sim);
 void renderOrbitalSim2D(OrbitalSim *sim);
@@ -62,7 +65,6 @@ void renderOrbitalSim3D(OrbitalSim *sim)
 
 void renderOrbitalSim2D(OrbitalSim *sim)
 {
-    static int asteroidNum = sim->bodyNum - sim->bodyNumCore;
     static int coreNum = sim->bodyNumCore;
 
     char auxiliarString[6];
@@ -72,13 +74,39 @@ void renderOrbitalSim2D(OrbitalSim *sim)
     DrawText(getISODate(sim->time), 0, 25, 14, GOLD);
 
     DrawText("Planetary system: ", 0, 45, 14, GOLD);
+    switch (CHOSEN_SYSTEM)
+    {
+    case SOLAR:
+        DrawText("Solar", 0, 60, 14, GOLD);
+        break;
 
-    DrawText("Planetary system bodies: ", 0, 65, 14, GOLD);
+    case ALPHACENTAURI:
+        DrawText("Alphacentauri", 0, 60, 14, GOLD);
+        break;
+
+    default:
+        break;
+    }
+
+    DrawText("Planetary system bodies: ", 0, 80, 14, GOLD);
     sprintf(auxiliarString, "%d", coreNum);
-    DrawText(auxiliarString, 0, 80, 14, GOLD);
+    DrawText(auxiliarString, 0, 95, 14, GOLD);
 
-    DrawText("Asteroids: ", 0, 100, 14, GOLD);
-    sprintf(auxiliarString, "%d", asteroidNum);
-    DrawText(auxiliarString, 0, 115, 14, GOLD);
-    
+    DrawText("Asteroids: ", 0, 115, 14, GOLD);
+    sprintf(auxiliarString, "%d", ASTEROIDS_NUM);
+    DrawText(auxiliarString, 0, 130, 14, GOLD);
+
+    if (BLACK_HOLE)
+    {
+        DrawText("Black hole ON", 0, 150, 14, GOLD);
+    }
+    else
+    {
+        DrawText("Black hole OFF", 0, 150, 14, GOLD);
+    }
+
+    if(TWEAK_JUPITER_MASS)
+    {
+        DrawText("Jupiter mass tweak ON", 0, 170, 14, GOLD);
+    }
 }
