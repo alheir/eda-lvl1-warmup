@@ -110,10 +110,12 @@ void placeAsteroid(OrbitalBody *body, float centerMass)
 OrbitalSim *makeOrbitalSim(float timeStep)
 {
     int i;
+    int systemBodyNumCore, systemBodyNum;
+
     OrbitalSim *tempOrbitalSim = NULL;
     OrbitalBody **bodies = NULL;
     EphemeridesBody *systemInfo;
-    int systemBodyNumCore, systemBodyNum;
+
 
     switch (CHOSEN_SYSTEM)
     {
@@ -137,20 +139,25 @@ OrbitalSim *makeOrbitalSim(float timeStep)
 
     systemBodyNum = systemBodyNumCore + ASTEROIDS_NUM;
 
-#ifdef BLACK_HOLE
-    systemBodyNumCore++;
-    systemBodyNum++;
+    /*********BLACK_HOLE*********/
+    if (BLACK_HOLE)
+    {
+        systemBodyNumCore++;
+        systemBodyNum++;
+    }
 
+    // Template de black hole, con posicion y velocidad iniciales totalmente empíricos
     const OrbitalBody blacky = {Vector3Subtract(solarSystem[3].position, solarSystem[6].position),
                                 Vector3Scale(solarSystem[5].velocity, -1),
                                 Vector3Zero(),
                                 systemInfo[0].mass * BLACK_HOLE_MASS_FACTOR,
                                 systemInfo[0].radius,
                                 DARKGRAY};
-#endif
+    /*********BLACK_HOLE*********/
 
     if (!(tempOrbitalSim = (OrbitalSim *)malloc(sizeof(OrbitalSim))))
         return NULL;
+
     if (!(bodies = (OrbitalBody **)malloc(systemBodyNum * sizeof(OrbitalBody *))))
     {
         free(tempOrbitalSim);
@@ -173,52 +180,56 @@ OrbitalSim *makeOrbitalSim(float timeStep)
             return NULL;
         }
 
-        // Cuerpos principales del sistema (no asteroides)
-        if (i < systemBodyNumCore)
+        // Se coloca al blackhole como primer cuerpo del sistema,
+        // debiendo alterar los índices.
+        if (BLACK_HOLE)
         {
-
-#ifdef BLACK_HOLE
-
-            // Se coloca al blackhole como primer cuerpo del sistema,
-            // debiendo alterar los índices.
-
-            if (!i)
+            // Cuerpos principales del sistema (no asteroides)
+            if (i < systemBodyNumCore)
             {
-                *(bodies[0]) = blacky;
+
+                if (!i)
+                {
+                    *(bodies[0]) = blacky;
+                }
+
+                else
+                {
+                    *(bodies[i]) = {systemInfo[i - 1].position,
+                                    systemInfo[i - 1].velocity,
+                                    Vector3Zero(),
+                                    systemInfo[i - 1].mass,
+                                    systemInfo[i - 1].radius,
+                                    systemInfo[i - 1].color};
+                }
             }
 
             else
             {
-                *(bodies[i]) = {systemInfo[i - 1].position,
-                                systemInfo[i - 1].velocity,
-                                Vector3Zero(),
-                                systemInfo[i - 1].mass,
-                                systemInfo[i - 1].radius,
-                                systemInfo[i - 1].color};
+                placeAsteroid(bodies[i], bodies[1]->mass);
             }
         }
 
         else
         {
-            placeAsteroid(bodies[i], bodies[1]->mass);
+            // Cuerpos principales del sistema (no asteroides)
+            if (i < systemBodyNumCore)
+            {
+
+                *(bodies[i]) = {systemInfo[i].position,
+                                systemInfo[i].velocity,
+                                Vector3Zero(),
+                                systemInfo[i].mass,
+                                systemInfo[i].radius,
+                                systemInfo[i].color};
+            }
+
+            else
+            {
+                placeAsteroid(bodies[i], bodies[0]->mass);
+            }
         }
     }
-
-#else
-            *(bodies[i]) = {systemInfo[i].position,
-                            systemInfo[i].velocity,
-                            Vector3Zero(),
-                            systemInfo[i].mass,
-                            systemInfo[i].radius,
-                            systemInfo[i].color};
-        }
-
-        else
-        {
-            placeAsteroid(bodies[i], bodies[0]->mass);
-        }
-    }
-#endif
 
     return tempOrbitalSim;
 }

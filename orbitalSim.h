@@ -15,6 +15,42 @@
 #include "raylib.h"
 #include "raymath.h"
 
+/**********************************************************************/
+/**************************ARCHITECT'S CONSOLE*************************/
+/**********************************************************************/
+
+#define DAYS_PER_SECOND 100
+
+enum PLANETARY_SYSTEMS
+{
+    SOLAR,
+    ALPHACENTAURI
+};
+
+enum ASTEROIDS_COLORS
+{
+    PARTY,
+    BOKE,
+    MESSI,
+    DEFAULT
+};
+
+#define CHOSEN_SYSTEM ALPHACENTAURI // see PLANTEARY_SYSTEMS enum
+#define ASTEROIDS_NUM 5000
+
+#define TWEAK_JUPITER_MASS false // true or false
+#define JUPITER_ID 5
+#define TWEAK_JUPITER_MASS_FACTOR 1000 // veces de la masa de Júpiter
+
+#define BLACK_HOLE false             // true or false
+#define BLACK_HOLE_MASS_FACTOR 10000 // veces de la masa mayor del sistema
+
+#define CHOSEN_ASTEROIDS_COLORS 1 // see ASTEROIDS_COLORS enum
+
+/**********************************************************************/
+/**************************ARCHITECT'S CONSOLE*************************/
+/**********************************************************************/
+
 struct OrbitalBody
 {
     Vector3 position;
@@ -37,38 +73,5 @@ struct OrbitalSim
 OrbitalSim *makeOrbitalSim(float timeStep);
 void updateOrbitalSim(OrbitalSim *sim);
 void freeOrbitalSim(OrbitalSim *sim);
-
-/**********************************************************************/
-/**************************ARCHITECT'S CONSOLE*************************/
-/**********************************************************************/
-
-enum PLANETARY_SYSTEMS
-{
-    SOLAR,
-    ALPHACENTAURI
-};
-
-enum ASTEROIDS_COLORS
-{
-    PARTY,
-    BOKE,
-    MESSI,
-    DEFAULT
-};
-
-#define CHOSEN_SYSTEM SOLAR // see PLANTEARY_SYSTEMS enum
-#define ASTEROIDS_NUM 5000
-
-#define TWEAK_JUPITER_MASS false // true or false
-#define JUPITER_ID 5
-#define TWEAK_JUPITER_MASS_FACTOR 1000 // veces de la masa de Júpiter
-
-//#define BLACK_HOLE // comment or uncomment
-#define BLACK_HOLE_MASS_FACTOR 100000 // veces de la masa mayor del sistema
-
-#define CHOSEN_ASTEROIDS_COLORS 1 // see ASTEROIDS_COLORS enum
-/**********************************************************************/
-/**************************ARCHITECT'S CONSOLE*************************/
-/**********************************************************************/
 
 #endif
