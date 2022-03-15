@@ -10,6 +10,8 @@
  */
 
 #include <time.h>
+#include <string.h>
+#include <stdio.h>
 
 #include "orbitalSimView.h"
 
@@ -63,4 +65,10 @@ void renderOrbitalSim2D(OrbitalSim *sim)
 {
     DrawFPS(0, 0);
     DrawText(getISODate(sim->time), 0, 20, 12, GOLD);
+    /*
+    char asteroidsText[22] = "Number of Asteroids: ";
+    char asteroidsTextNum[5];
+    sprintf(asteroidsTextNum, "%d", sim->bodyNum - sim->bodyNumCore);
+    DrawText(strcat(asteroidsText, asteroidsTextNum), 0, 40, 12, WHITE);
+    */
 }

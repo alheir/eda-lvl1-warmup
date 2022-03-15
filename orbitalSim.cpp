@@ -12,17 +12,24 @@
  * 		claramente por debajo. Con float de 32bits, se puede llegar hasta aproximadamente 3.4*10^38, lo
  * 		cual es suficiente para representar, en este caso, masas astronómicas.
  *
- * 		Observamos que el tipo de dato Vector3 de raylib implementa vectores con float, por lo que consideramos que tendrá la presición y rango necesarios. Además, la información
- * 		proveída en ephemerides.h ya venía con masas, posiciones y velocidades con tipo de dato float.
+ * 		Observamos que el tipo de dato Vector3 de raylib implementa vectores con float, por lo que consideramos
+ *      que tendrá la presición y rango necesarios. Además, la información proveída en ephemerides.h ya venía
+ *      con masas, posiciones y velocidades con tipo de dato float.
  *
  * Sobre simulación lenta y complejidad algorítmica: la "peor" complejidad está en la lógica de
  * 		updateOrbitalSim, en donde el doble for causa una O(n^2). Se repiten cálculos "innecesarios", o más
- * 		bien, se hacen cálculos iguales y opuestos a cálculos previos.
+ * 		bien, se hacen cálculos iguales y opuestos a cálculos previos. Adicionalmente, creemos que también
+ *      puede haber una complicación al renderizar tantas esferas ("DrawSphere()") y puntos.
  *
- * Sobre solución de lo anterior: la O(n^2) se redujo haciendo dobles asignaciones de los cálculos en
- * 		cuestión: "si calculo para el Sol comparando con los otros cuerpos, también guardo 'los otros
- * 		cuerpos vs. el Sol', con el signo cambiado".
- *
+ * Sobre solución de lo anterior: Primero, optimizamos el funcionamiento haciendo dobles asignaciones de los
+ *      cálculos: "si calculo para el Sol comparando con los otros cuerpos, también guardo 'los otros cuerpos
+ *      vs. el Sol', con el signo cambiado". Luego, se redujo la complejidad de los problemas anteriormente
+ *      mencionados, solucionando problemas relacionados con los cuellos de botella en la parte gráfica y la
+ *      parte de cálculo. En ambos casos, la clave se encuentra en  despreciar la masa de los asteroides en 
+ *      comparación con la del resto de los cuerpos celestes; decidimos que graficar los asteroides con un
+ *      punto ("DrawPoint3D()") era suficiente, y que la interacción que pueden llegar a tener con el resto de
+ *      los planetas y entre sí no es significante. Es decir, no se calculan las fuerzas gravitacionales de 
+ *      los asteroides entre asteroides.
  */
 
 #include "orbitalSim.h"
@@ -68,10 +75,27 @@ void placeAsteroid(OrbitalBody *body, float centerMass)
     // Fill in with your own fields:
     body->mass = 1E12F;  // Typical asteroid weight: 1 billion tons
     body->radius = 2E3F; // Typical asteroid radius: 2km
+    body->position = { r * cosf(phi), 0, r * sinf(phi) };
 
-    if (PARTY_TIME)
+    if (CHOSEN_ASTEROIDS_COLORS == PARTY)
+        body->color = {getRandomUChar(0, 255), getRandomUChar(0, 255), getRandomUChar(0, 255), 126};
+
+    if (CHOSEN_ASTEROIDS_COLORS == BOKE)
     {
-        body->color = (Color){getRandomUChar(0, 255), getRandomUChar(0, 255), getRandomUChar(0, 255), 126};
+        if (body->position.x <= solarSystem[3].position.x)
+            body->color = BLUE;
+
+        else
+            body->color = YELLOW;
+    }
+
+    if (CHOSEN_ASTEROIDS_COLORS == MESSI)
+    {
+        if (body->position.x <= solarSystem[3].position.x)
+            body->color = WHITE;
+
+        else
+            body->color = SKYBLUE;
     }
 
     else
@@ -79,7 +103,6 @@ void placeAsteroid(OrbitalBody *body, float centerMass)
         body->color = GRAY;
     }
 
-    body->position = {r * cosf(phi), 0, r * sinf(phi)};
     body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};
 }
 
