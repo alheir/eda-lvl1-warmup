@@ -9,14 +9,14 @@
  *
  */
 
+
+#ifndef ORBITALBODY_H
+#define ORBITALBODY_H
+
 #include "raylib-cpp.hpp"
 
 class OrbitalBody
 {
-
-using namespace raylib;
-
-
 public:
     OrbitalBody();
     ~OrbitalBody();
@@ -27,9 +27,10 @@ public:
     void setMass(Vector3 mass);
     void setColor(Color color);
 
-    Vector3 getAceleration();
+    Vector3 getAcceleration();
     Vector3 getMass();
     Vector3 getVelocity();
+    Vector3 getPosition();
 
 private:
     Vector3 position;
@@ -38,4 +39,6 @@ private:
     float mass;
     float radius;
     Color color;
-}
+};
+
+#endif

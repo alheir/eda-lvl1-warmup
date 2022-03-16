@@ -9,6 +9,11 @@
  *
  */
 
+#ifndef ORBITALSIM_H
+#define ORBITALSIM_H
+
+#include "raylib-cpp.hpp"
+
 enum PLANETARY_SYSTEM
 {
     SOLAR,
@@ -19,13 +24,11 @@ class OrbitalSim
 {
 public:
     OrbitalSim(float timeStep,
-               int system = SOLAR,
-               bool setBlackHole = false,
-               bool tweakJupiterMass = false,
-               unsigned int asteroidsNum = 0,
-               bool partyTime = false);
-
-    ~OrbitalSim();
+        int system = SOLAR,
+        bool setBlackHole = false,
+        bool tweakJupiterMass = false,
+        unsigned int asteroidsNum = 0,
+        bool partyTime = false);
 
     void update();
 
@@ -40,6 +43,7 @@ private:
     float time;
     int bodyNumCore;
     int bodyNum;
+    OrbitalBody* bodies;
+};
 
-    // OrbitalBody **bodies;
-}
+#endif
