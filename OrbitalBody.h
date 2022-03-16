@@ -21,15 +21,16 @@ public:
     void setAcceleration(raylib::Vector3 acceleration);
     void setVelocity(raylib::Vector3 velocity);
     void setPosition(raylib::Vector3 position);
-    void setMass(raylib::Vector3 mass);
+    void setMass(float mass);
     void setColor(raylib::Color color);
     void setRadius(float radius);
 
-    raylib::Vector3 getAceleration();
-    raylib::Vector3 getMass();
+    raylib::Vector3 getAcceleration();
+    float getMass();
     raylib::Vector3 getVelocity();
-    raylib::Vector3 getRadius();
+    float getRadius();
     raylib::Vector3 getPosition();
+    raylib::Color getColor();
 
 private:
     raylib::Vector3 position;

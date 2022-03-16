@@ -12,11 +12,15 @@
 #ifndef ORBITALSIM_H
 #define ORBITALSIM_H
 
+#include "OrbitalBody.h"
+
 #include "raylib-cpp.hpp"
 
-    enum PLANETARY_SYSTEM {
-        SOLAR,
-        ALPHACENTAURI };
+enum PLANETARY_SYSTEM
+{
+    SOLAR,
+    ALPHACENTAURI
+};
 
 class OrbitalSim
 {
@@ -29,6 +33,8 @@ public:
                bool partyTime = false);
 
     void update();
+    void render3D();
+    void render2D();
 
     float getTimeStep();
     float getTime();
@@ -43,6 +49,10 @@ private:
     int bodyNumCore;
     int bodyNum;
     bool partyTime;
+    int system;
+    bool tweakJupiterMass;
+    bool setBlackHole;
+    unsigned int asteroidsNum;
     OrbitalBody *bodies;
 
     void placeAsteroid(OrbitalBody &body, float centerMass);

@@ -26,7 +26,7 @@ void OrbitalBody::setPosition(raylib::Vector3 position)
     this->position = position;
 }
 
-void OrbitalBody::setMass(raylib::Vector3 mass)
+void OrbitalBody::setMass(float mass)
 {
     this->mass = mass;
 }
@@ -41,7 +41,7 @@ raylib::Vector3 OrbitalBody::getAcceleration()
     return acceleration;
 }
 
-raylib::Vector3 OrbitalBody::getMass()
+float OrbitalBody::getMass()
 {
     return mass;
 }
@@ -52,8 +52,18 @@ raylib::Vector3 OrbitalBody::getVelocity()
     return velocity;
 }
 
+float OrbitalBody::getRadius()
+{
+    return radius;
+}
+
 
 raylib::Vector3 OrbitalBody::getPosition()
 {
     return position;
+}
+
+raylib::Color OrbitalBody::getColor()
+{
+    return color;
 }
