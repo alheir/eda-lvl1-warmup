@@ -19,52 +19,44 @@ int main()
     const int screenWidth = 800;
     const int screenHeight = 450;
 
-    InitWindow(screenWidth, screenHeight, "EDA Orbital Simulation");
+    raylib::Window window(screenWidth, screenHeight, "EDA Orbital Simulation");
 
     // Camera
-    Camera3D camera;
-    camera.position = {10.0f, 10.0f, 10.0f};
-    camera.target = {0.0f, 0.0f, 0.0f};
-    camera.up = {0.0f, 1.0f, 0.0f};
-    camera.fovy = 60.0f;
-    camera.projection = CAMERA_PERSPECTIVE;
-    SetCameraMode(camera, CAMERA_FREE);
+    raylib::Camera camera(raylib::Vector3(4.0f, 2.0f, 4.0f),
+                          raylib::Vector3(0.0f, 1.8f, 0.0f),
+                          raylib::Vector3(0.0f, 1.0f, 0.0f),
+                          60.0f,
+                          CAMERA_PERSPECTIVE);
 
-    SetCameraPanControl(MOUSE_BUTTON_LEFT);
+    camera.SetMode(CAMERA_FREE);
 
     // Orbital simulation
     const float fps = 60.0F;                            // frames per second
     const float timeMultiplier = 100 * SECONDS_PER_DAY; // Simulation speed: days per real second
     const float timeStep = timeMultiplier / fps;
 
-    OrbitalSim sim()
+    OrbitalSim sim;
 
-    if (!sim)
-    {
-        printf("No se pudo inicializar orbitalSim...\n");
-        CloseWindow();
-        return 1;
-    }
 
     // Game loop
-    while (!WindowShouldClose())
+    while (!window.ShouldClose())
     {
         // Update simulation
-        updateOrbitalSim(sim);
+        sim.update();
 
         // Camera
-        UpdateCamera(&camera);
+        camera.Update();
 
         // Render
         BeginDrawing();
-        ClearBackground(BLACK);
+        window.ClearBackground(BLACK);
 
-        BeginMode3D(camera);
-        renderOrbitalSim3D(sim);
+        camera.BeginMode();
+        sim.render3D();
         DrawGrid(10, 10.0f);
-        EndMode3D();
+        camera.EndMode();
 
-        renderOrbitalSim2D(sim);
+        sim.render2D();
         EndDrawing();
 
         // Se hacen coincidir FPS de raylib con los de la cuenta de timeStep para que
@@ -75,12 +67,10 @@ int main()
         // Luego, se consigue NO limitar los fps, y que el timeStep siempre sea correcto.
         //
         // No se notaron impactos en el rendimiento al agregar una división en cada vuelta del loop
-        sim->timeStep = timeMultiplier / GetFPS();
+        sim.setTimeStep(timeMultiplier / window.GetFPS());
     }
 
-    CloseWindow();
-
-    freeOrbitalSim(sim);
+    window.Close();
 
     return 0;
 }
