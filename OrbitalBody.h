@@ -18,27 +18,26 @@
 class OrbitalBody
 {
 public:
-    OrbitalBody();
-    ~OrbitalBody();
+    void setAcceleration(raylib::Vector3 acceleration);
+    void setVelocity(raylib::Vector3 velocity);
+    void setPosition(raylib::Vector3 position);
+    void setMass(raylib::Vector3 mass);
+    void setColor(raylib::Color color);
+    void setRadius(float radius);
 
-    void setAcceleration(Vector3 acceleration);
-    void setVelocity(Vector3 velocity);
-    void setPosition(Vector3 position);
-    void setMass(Vector3 mass);
-    void setColor(Color color);
-
-    Vector3 getAcceleration();
-    Vector3 getMass();
-    Vector3 getVelocity();
-    Vector3 getPosition();
+    raylib::Vector3 getAceleration();
+    raylib::Vector3 getMass();
+    raylib::Vector3 getVelocity();
+    raylib::Vector3 getRadius();
+    raylib::Vector3 getPosition();
 
 private:
-    Vector3 position;
-    Vector3 velocity;
-    Vector3 acceleration;
+    raylib::Vector3 position;
+    raylib::Vector3 velocity;
+    raylib::Vector3 acceleration;
     float mass;
     float radius;
-    Color color;
+    raylib::Color color;
 };
 
 #endif

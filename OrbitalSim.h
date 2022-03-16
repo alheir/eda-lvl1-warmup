@@ -14,21 +14,19 @@
 
 #include "raylib-cpp.hpp"
 
-enum PLANETARY_SYSTEM
-{
-    SOLAR,
-    ALPHACENTAURI
-};
+    enum PLANETARY_SYSTEM {
+        SOLAR,
+        ALPHACENTAURI };
 
 class OrbitalSim
 {
 public:
     OrbitalSim(float timeStep,
-        int system = SOLAR,
-        bool setBlackHole = false,
-        bool tweakJupiterMass = false,
-        unsigned int asteroidsNum = 0,
-        bool partyTime = false);
+               int system = SOLAR,
+               bool setBlackHole = false,
+               bool tweakJupiterMass = false,
+               unsigned int asteroidsNum = 0,
+               bool partyTime = false);
 
     void update();
 
@@ -37,13 +35,17 @@ public:
     int getBodyNumCore();
     int getBodyNum();
     void setTimeStep(float timeStep);
+    bool getPartyTime();
 
 private:
     float timeStep;
     float time;
     int bodyNumCore;
     int bodyNum;
-    OrbitalBody* bodies;
+    bool partyTime;
+    OrbitalBody *bodies;
+
+    void placeAsteroid(OrbitalBody &body, float centerMass);
 };
 
 #endif
