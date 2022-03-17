@@ -36,6 +36,11 @@ void OrbitalBody::setColor(raylib::Color color)
     this->color = color;
 }
 
+void OrbitalBody::setRadius(float radius)
+{
+    this->radius = radius;
+}
+
 raylib::Vector3 OrbitalBody::getAcceleration()
 {
     return acceleration;

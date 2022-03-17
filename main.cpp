@@ -28,15 +28,15 @@ int main()
                           60.0f,
                           CAMERA_PERSPECTIVE);
 
-    camera.SetMode(CAMERA_FREE);
+    camera.SetMode(CAMERA_FIRST_PERSON);
 
     // Orbital simulation
+    const int daysPerSecond = 100;
     const float fps = 60.0F;                            // frames per second
-    const float timeMultiplier = 100 * SECONDS_PER_DAY; // Simulation speed: days per real second
+    const float timeMultiplier = daysPerSecond * SECONDS_PER_DAY; // Simulation speed: days per real second
     const float timeStep = timeMultiplier / fps;
 
-    OrbitalSim sim;
-
+    OrbitalSim sim(timeStep, ALPHACENTAURI);
 
     // Game loop
     while (!window.ShouldClose())

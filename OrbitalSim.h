@@ -25,6 +25,17 @@ enum PLANETARY_SYSTEM
 class OrbitalSim
 {
 public:
+
+    /**
+     * @brief Construct a new Orbital Sim object
+     * 
+     * @param timeStep timeStep used to do physics calculations
+     * @param system see PLANETARY_SYSTEM enum
+     * @param setBlackHole true or false
+     * @param tweakJupiterMass true or false (only for SOLAR system)
+     * @param asteroidsNum from 0 to "+inf"
+     * @param partyTime = true or false, modifies asteroids colors
+     */
     OrbitalSim(float timeStep,
                int system = SOLAR,
                bool setBlackHole = false,

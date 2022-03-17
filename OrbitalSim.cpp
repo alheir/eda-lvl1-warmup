@@ -43,6 +43,7 @@ OrbitalSim::OrbitalSim(float timeStep,
     this->system = system;
     this->tweakJupiterMass = tweakJupiterMass;
     this->asteroidsNum = asteroidsNum;
+    this->timeStep = timeStep;
 
     switch (system)
     {
@@ -219,7 +220,7 @@ void OrbitalSim::update()
         bodies[i].setAcceleration(Vector3Zero());
     }
 
-    for (i = 0; i < bodyNum; i++)
+    for (i = 0; i < bodyNumCore; i++)
     {
         for (int j = i + 1; j < bodyNum; j++)
         {
