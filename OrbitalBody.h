@@ -1,14 +1,14 @@
 /**
  * @file OrbitalBody.h
- * @author your name (you@domain.com)
- * @brief
+ * @authors Alejandro Heir, Matías Álvarez
+ * @brief Clase OrbitalBody, para implementar cuerpos en la simulación
+ * de sistema planetario (OrbitalSim)
  * @version 0.1
  * @date 2022-03-15
  *
  * @copyright Copyright (c) 2022
  *
  */
-
 
 #ifndef ORBITALBODY_H
 #define ORBITALBODY_H

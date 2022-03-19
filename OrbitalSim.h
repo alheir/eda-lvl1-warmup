@@ -1,7 +1,7 @@
 /**
  * @file OrbitalSim.h
- * @author your name (you@domain.com)
- * @brief
+ * @authors Alejandro Heir, Matías Álvarez
+ * @brief Clase OrbitalSim, para crear una simulación de sistema planetario.
  * @version 0.1
  * @date 2022-03-15
  *
@@ -13,7 +13,6 @@
 #define ORBITALSIM_H
 
 #include "OrbitalBody.h"
-
 #include "raylib-cpp.hpp"
 
 enum PLANETARY_SYSTEM
@@ -25,46 +24,53 @@ enum PLANETARY_SYSTEM
 class OrbitalSim
 {
 public:
-
     /**
      * @brief Construct a new Orbital Sim object
-     * 
-     * @param timeStep timeStep used to do physics calculations
+     *
+     * @param daysPerSecond a whole nomber greater than 1
      * @param system see PLANETARY_SYSTEM enum
+     * @param asteroidsNum from 0 to "+inf"
      * @param setBlackHole true or false
      * @param tweakJupiterMass true or false (only for SOLAR system)
-     * @param asteroidsNum from 0 to "+inf"
-     * @param partyTime = true or false, modifies asteroids colors
+     * @param partyTime true or false, modifies asteroids colors
+     * @param easterEgg
      */
-    OrbitalSim(float timeStep,
+    OrbitalSim(int daysPerSecond = 100,
                int system = SOLAR,
+               unsigned int asteroidsNum = 0,
                bool setBlackHole = false,
                bool tweakJupiterMass = false,
-               unsigned int asteroidsNum = 0,
-               bool partyTime = false);
+               bool partyTime = false,
+               bool easterEgg = false);
 
-    void update();
+    ~OrbitalSim();
+
+    void update(float referenceFps = 0.0F);
     void render3D();
     void render2D();
 
-    float getTimeStep();
+    // Getters
     float getTime();
     int getBodyNumCore();
     int getBodyNum();
-    void setTimeStep(float timeStep);
     bool getPartyTime();
 
 private:
     float timeStep;
+    float timeMultiplier;
     float time;
+
+    int system;
+
     int bodyNumCore;
     int bodyNum;
-    bool partyTime;
-    int system;
-    bool tweakJupiterMass;
-    bool setBlackHole;
     unsigned int asteroidsNum;
     OrbitalBody *bodies;
+
+    bool tweakJupiterMass;
+    bool blackHole;
+    bool partyTime;
+    bool easterEgg;
 
     void placeAsteroid(OrbitalBody &body, float centerMass);
 };

@@ -1,18 +1,15 @@
-/**
+﻿/**
  * @file main.cpp
- * @author your name (you@domain.com)
- * @brief 
+ * @authors Alejandro Heir, Matías Álvarez
+ * @brief Main file
  * @version 0.1
  * @date 2022-03-15
- * 
+ *
  * @copyright Copyright (c) 2022
- * 
+ *
  */
 
-#include <iostream>
 #include "OrbitalSim.h"
-
-#define SECONDS_PER_DAY 86400.0F
 
 int main()
 {
@@ -30,47 +27,50 @@ int main()
 
     camera.SetMode(CAMERA_FIRST_PERSON);
 
-    // Orbital simulation
-    const int daysPerSecond = 100;
-    const float fps = 60.0F;                            // frames per second
-    const float timeMultiplier = daysPerSecond * SECONDS_PER_DAY; // Simulation speed: days per real second
-    const float timeStep = timeMultiplier / fps;
+    // Inicialización default
+    // Ver documentación del constructor en el header de la clase para
+    // conocer/modificar valores default.
+    //
+    // OrbitalSim sim;
 
-    OrbitalSim sim(timeStep, ALPHACENTAURI);
+    // Inicializacion custom
+    // Ver documentación del constructor en el header de la clase, o seguir
+    // las ayudas/referencias (de existir) del editor de texto al ir ingresando argumentos.
+    //
+    OrbitalSim sim(100, SOLAR, 10000, false, true, true);
 
     // Game loop
     while (!window.ShouldClose())
     {
         // Update simulation
-        sim.update();
+        //
+        // Sobre el window.GetFPS, ver comentario dentro del método update.
+        sim.update(window.GetFPS());
 
         // Camera
         camera.Update();
 
         // Render
         BeginDrawing();
-        window.ClearBackground(BLACK);
+        {
+            window.ClearBackground(BLACK);
 
-        camera.BeginMode();
-        sim.render3D();
-        DrawGrid(10, 10.0f);
-        camera.EndMode();
+            camera.BeginMode();
+            sim.render3D();
+            DrawGrid(10, 10.0f);
+            camera.EndMode();
 
-        sim.render2D();
+            sim.render2D();
+        }
+
         EndDrawing();
-
-        // Se hacen coincidir FPS de raylib con los de la cuenta de timeStep para que
-        // este ultimo siempre "esté bien", sin importar los fps de raylib.
-        // En un principio se ponía un topo a los fps con SetTargetFPS, pero si eran
-        // menores al seteado, el avance temporal quedaba mal.
-        //
-        // Luego, se consigue NO limitar los fps, y que el timeStep siempre sea correcto.
-        //
-        // No se notaron impactos en el rendimiento al agregar una división en cada vuelta del loop
-        sim.setTimeStep(timeMultiplier / window.GetFPS());
     }
 
-    window.Close();
+    // Se observó que el programa siempre finalizaba con liberaciones extras de memoria.
+    // Con el debugger, se llegó a que esto ocurría internamente en el CloseWindow() de raylib.
+    // Revisando los ejemplos de raylib-cpp, en todos se omitía dicha función antes de finalizar el main.
+    //
+    // Quitando CloseWindow(), la desinicialización de raylib comenzó a ser correcta.
 
     return 0;
 }

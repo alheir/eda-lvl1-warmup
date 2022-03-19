@@ -1,12 +1,13 @@
 /**
  * @file OrbitalBody.cpp
- * @author your name (you@domain.com)
- * @brief 
+ * @authors Alejandro Heir, Matías Álvarez
+ * @brief Clase OrbitalBody, para implementar cuerpos en la simulación
+ * de sistema planetario (OrbitalSim)
  * @version 0.1
  * @date 2022-03-15
- * 
+ *
  * @copyright Copyright (c) 2022
- * 
+ *
  */
 
 #include "OrbitalBody.h"
@@ -51,7 +52,6 @@ float OrbitalBody::getMass()
     return mass;
 }
 
-
 raylib::Vector3 OrbitalBody::getVelocity()
 {
     return velocity;
@@ -61,7 +61,6 @@ float OrbitalBody::getRadius()
 {
     return radius;
 }
-
 
 raylib::Vector3 OrbitalBody::getPosition()
 {

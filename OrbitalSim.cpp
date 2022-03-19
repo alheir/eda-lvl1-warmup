@@ -1,7 +1,7 @@
 /**
  * @file OrbitalSim.cpp
- * @author your name (you@domain.com)
- * @brief
+ * @authors Alejandro Heir, Matías Álvarez
+ * @brief Clase OrbitalSim, para crear una simulación de sistema planetario.
  * @version 0.1
  * @date 2022-03-15
  *
@@ -11,39 +11,46 @@
 
 #include <iostream>
 #include <string.h>
-
 #include "OrbitalSim.h"
 #include "ephemerides.h"
 
 #define GRAVITATIONAL_CONSTANT 6.6743E-11F
 #define ASTEROIDS_MEAN_RADIUS 4E11F
 
-// Gets a random value between min and max
+/* Internal function prototypes */
 float getRandomFloat(float min, float max);
-
-// Gets a random unsigned char value between min and max
 unsigned char getRandomUChar(unsigned char min, unsigned max);
-
 const char *getISODate(float currentTime);
+/* Internal function prototypes */
 
-OrbitalSim::OrbitalSim(float timeStep,
+OrbitalSim::OrbitalSim(int daysPerSec,
                        int system,
+                       unsigned int asteroidsNum,
                        bool setBlackHole,
                        bool tweakJupiterMass,
-                       unsigned int asteroidsNum,
-                       bool partyTime)
+                       bool partyTime,
+                       bool easterEgg)
 {
+    // time stuff
+    const float secondsPerDay = 86400.0F;
+    const int daysPerSecond = daysPerSec;
+    const float fps = 60.0F;                              // frames per second
+    this->timeMultiplier = daysPerSecond * secondsPerDay; // Simulation speed: days per real second
+    const float timeStep = timeMultiplier / fps;
+
     const int jupiterID = 5;
     const int tweakJupiterMassFactor = 1000;
     const int blackHoleMassFactor = 100000;
-
-    EphemeridesBody *systemInfo = NULL;
 
     this->partyTime = partyTime;
     this->system = system;
     this->tweakJupiterMass = tweakJupiterMass;
     this->asteroidsNum = asteroidsNum;
     this->timeStep = timeStep;
+    this->blackHole = setBlackHole;
+    this->easterEgg = easterEgg;
+
+    EphemeridesBody *systemInfo = NULL;
 
     switch (system)
     {
@@ -69,7 +76,7 @@ OrbitalSim::OrbitalSim(float timeStep,
     bodyNum = bodyNumCore + asteroidsNum;
 
     /*********BLACK_HOLE*********/
-    if (setBlackHole)
+    if (blackHole)
     {
         bodyNum++;
         bodyNumCore++;
@@ -88,7 +95,7 @@ OrbitalSim::OrbitalSim(float timeStep,
 
     for (int i = 0; i < bodyNum; i++)
     {
-        if ((i == (bodyNumCore - 1)) && setBlackHole)
+        if ((i == (bodyNumCore - 1)) && blackHole)
         {
             bodies[i] = blacky;
 
@@ -110,6 +117,11 @@ OrbitalSim::OrbitalSim(float timeStep,
             placeAsteroid(bodies[i], systemInfo[0].mass);
         }
     }
+}
+
+OrbitalSim::~OrbitalSim()
+{
+    delete[] bodies;
 }
 
 void OrbitalSim::render3D()
@@ -134,47 +146,47 @@ void OrbitalSim::render3D()
 
 void OrbitalSim::render2D()
 {
-    char auxiliarString[6];
-
     DrawFPS(0, 0);
 
-    DrawText(getISODate(time), 0, 25, 14, GOLD);
+    raylib::DrawText(getISODate(time), 0, 25, 14, GOLD);
 
-    DrawText("Planetary system: ", 0, 45, 14, GOLD);
+    raylib::DrawText("Planetary system: ", 0, 45, 14, GOLD);
     switch (system)
     {
     case SOLAR:
-        DrawText("Solar", 0, 60, 14, GOLD);
+        raylib::DrawText("Solar", 0, 60, 14, GOLD);
         break;
 
     case ALPHACENTAURI:
-        DrawText("Alphacentauri", 0, 60, 14, GOLD);
+        raylib::DrawText("Alphacentauri", 0, 60, 14, GOLD);
         break;
 
     default:
         break;
     }
 
-    DrawText("Planetary system bodies: ", 0, 80, 14, GOLD);
-    sprintf(auxiliarString, "%d", bodyNumCore);
-    DrawText(auxiliarString, 0, 95, 14, GOLD);
+    raylib::DrawText("Planetary system bodies: ", 0, 80, 14, GOLD);
+    raylib::DrawText(std::to_string(bodyNum), 0, 95, 14, GOLD);
 
-    DrawText("Asteroids: ", 0, 115, 14, GOLD);
-    sprintf(auxiliarString, "%d", asteroidsNum);
-    DrawText(auxiliarString, 0, 130, 14, GOLD);
+    raylib::DrawText("Asteroids: ", 0, 115, 14, GOLD);
+    raylib::DrawText(std::to_string(asteroidsNum), 0, 130, 14, GOLD);
 
-    if (setBlackHole)
+    if (blackHole)
     {
-        DrawText("Black hole ON", 0, 150, 14, GOLD);
+        raylib::DrawText("Black hole ON", 0, 150, 14, GREEN);
     }
     else
     {
-        DrawText("Black hole OFF", 0, 150, 14, GOLD);
+        raylib::DrawText("Black hole OFF", 0, 150, 14, GREEN);
     }
 
     if (tweakJupiterMass)
     {
-        DrawText("Jupiter mass tweak ON", 0, 170, 14, GOLD);
+        raylib::DrawText("Jupiter mass tweak ON", 0, 170, 14, GREEN);
+    }
+    else
+    {
+        raylib::DrawText("Jupiter mass tweak OFF", 0, 170, 14, GREEN);
     }
 }
 
@@ -186,10 +198,13 @@ void OrbitalSim::placeAsteroid(OrbitalBody &body, float centerMass)
 
     // https://mathworld.wolfram.com/DiskPointPicking.html
     float r = ASTEROIDS_MEAN_RADIUS * sqrtf(fabs(l));
-    float phi = getRandomFloat(0, 2 * 3.14);
+    float phi = getRandomFloat(0, 2 * 3.14) * (!easterEgg);
 
     // Surprise!
-    // phi = 0;
+    //
+    // already implemented; see easterEgg variable above
+    //
+    // phi = 0
 
     // https://en.wikipedia.org/wiki/Circular_orbit#Velocity
     float v = sqrtf(GRAVITATIONAL_CONSTANT * centerMass / r) * getRandomFloat(0.6F, 1.2F);
@@ -209,8 +224,26 @@ void OrbitalSim::placeAsteroid(OrbitalBody &body, float centerMass)
     body.setVelocity({-v * sinf(phi), vy, v * cosf(phi)});
 }
 
-void OrbitalSim::update()
+void OrbitalSim::update(float referenceFps)
 {
+    // Se hacen coincidir FPS de raylib con los de la cuenta de timeStep para que
+    // este ultimo siempre "esté bien", sin importar los fps de raylib.
+    // En un principio se ponía un tope a los fps con SetTargetFPS, pero si eran
+    // menores al seteado, la progreción temporal quedaba mal.
+    //
+    // Luego, se consigue NO limitar los fps (que sean los máximos que da raylib), y que
+    // el timeStep siempre sea correcto.
+    //
+    // No se notaron impactos en el rendimiento al agregar una división en cada vuelta del loop
+    //
+    // !!!
+    // Notar que referenceFps viene preinicializado, por lo que no es necesario pasar algo como argumento
+    // !!!
+    if (referenceFps > 5)
+    {
+        timeStep = timeMultiplier / referenceFps;
+    }
+
     time += timeStep;
 
     int i;
@@ -260,11 +293,6 @@ void OrbitalSim::update()
     }
 }
 
-float OrbitalSim::getTimeStep()
-{
-    return timeStep;
-}
-
 float OrbitalSim::getTime()
 {
     return time;
@@ -278,11 +306,6 @@ int OrbitalSim::getBodyNumCore()
 int OrbitalSim::getBodyNum()
 {
     return bodyNum;
-}
-
-void OrbitalSim::setTimeStep(float timeStep)
-{
-    this->timeStep = timeStep;
 }
 
 float getRandomFloat(float min, float max)

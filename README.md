@@ -4,3 +4,5 @@
 * Grupo: *15*
   * *ÁLVAREZ, Matías Ezequiel*
   * *HEIR, Alejandro Nahuel*
+
+$$Ingeniería \, Electrónica - ITBA$$
