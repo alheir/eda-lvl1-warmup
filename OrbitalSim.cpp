@@ -166,7 +166,7 @@ void OrbitalSim::render2D()
     }
 
     raylib::DrawText("Planetary system bodies: ", 0, 80, 14, GOLD);
-    raylib::DrawText(std::to_string(bodyNum), 0, 95, 14, GOLD);
+    raylib::DrawText(std::to_string(bodyNumCore), 0, 95, 14, GOLD);
 
     raylib::DrawText("Asteroids: ", 0, 115, 14, GOLD);
     raylib::DrawText(std::to_string(asteroidsNum), 0, 130, 14, GOLD);
