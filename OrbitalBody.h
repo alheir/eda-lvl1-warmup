@@ -18,6 +18,7 @@
 class OrbitalBody
 {
 public:
+    // Setters
     void setAcceleration(raylib::Vector3 acceleration);
     void setVelocity(raylib::Vector3 velocity);
     void setPosition(raylib::Vector3 position);
@@ -25,6 +26,7 @@ public:
     void setColor(raylib::Color color);
     void setRadius(float radius);
 
+    // Getters
     raylib::Vector3 getAcceleration();
     float getMass();
     raylib::Vector3 getVelocity();
@@ -41,4 +43,4 @@ private:
     raylib::Color color;
 };
 
-#endif
+#endif // ORBITALBODY_H

@@ -33,7 +33,7 @@ public:
      * @param setBlackHole true or false
      * @param tweakJupiterMass true or false (only for SOLAR system)
      * @param partyTime true or false, modifies asteroids colors
-     * @param easterEgg
+     * @param easterEgg true or false, aligns asteroids spawn (radially)
      */
     OrbitalSim(int daysPerSecond = 100,
                int system = SOLAR,
@@ -75,4 +75,4 @@ private:
     void placeAsteroid(OrbitalBody &body, float centerMass);
 };
 
-#endif
+#endif // ORBITALSIM_H

@@ -123,4 +123,4 @@ EphemeridesBody alphaCentauriSystem[] = {
 
 #define ALPHACENTAURISYSTEM_BODYNUM (sizeof(alphaCentauriSystem) / sizeof(EphemeridesBody))
 
-#endif
+#endif // EPHEMERIDES_H

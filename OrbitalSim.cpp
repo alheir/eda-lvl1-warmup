@@ -70,6 +70,14 @@ OrbitalSim::OrbitalSim(int daysPerSec,
         break;
 
     default:
+        system = SOLAR;
+
+        bodyNumCore = SOLARSYSTEM_BODYNUM;
+        systemInfo = solarSystem;
+
+        if (tweakJupiterMass)
+            systemInfo[jupiterID].mass *= tweakJupiterMassFactor;
+
         break;
     }
 
@@ -95,11 +103,9 @@ OrbitalSim::OrbitalSim(int daysPerSec,
 
     for (int i = 0; i < bodyNum; i++)
     {
-        if ((i == (bodyNumCore - 1)) && blackHole)
+        if (blackHole && (i == (bodyNumCore - 1)))
         {
-            bodies[i] = blacky;
-
-            i++;
+            bodies[i++] = blacky;
         }
 
         else if (i < bodyNumCore)
