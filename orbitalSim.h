@@ -30,7 +30,7 @@ enum PLANETARY_SYSTEMS
 #define CHOSEN_SYSTEM SOLAR // see PLANTEARY_SYSTEMS enum
 
 // Se llegó 30FPS con 50000 asteroides en Linux
-#define ASTEROIDS_NUM 15000
+#define ASTEROIDS_NUM 10000
 
 #define TWEAK_JUPITER_MASS false // true or false
 #define JUPITER_ID 5
