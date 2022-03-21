@@ -38,7 +38,7 @@ int main()
     // Ver documentación del constructor en el header de la clase, o seguir
     // las ayudas/referencias (de existir) del editor de texto al ir ingresando argumentos.
     //
-    OrbitalSim sim(100, SOLAR, 10000, false, true, true, true);
+    OrbitalSim sim(100, SOLAR, 25000, false, true, true, true);
 
     // Game loop
     while (!window.ShouldClose())
