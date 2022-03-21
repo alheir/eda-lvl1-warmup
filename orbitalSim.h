@@ -27,8 +27,10 @@ enum PLANETARY_SYSTEMS
     ALPHACENTAURI
 };
 
-#define CHOSEN_SYSTEM ALPHACENTAURI // see PLANTEARY_SYSTEMS enum
-#define ASTEROIDS_NUM 10000
+#define CHOSEN_SYSTEM SOLAR // see PLANTEARY_SYSTEMS enum
+
+// Se llegó 30FPS con 50000 asteroides en Linux
+#define ASTEROIDS_NUM 15000
 
 #define TWEAK_JUPITER_MASS false // true or false
 #define JUPITER_ID 5
@@ -37,7 +39,9 @@ enum PLANETARY_SYSTEMS
 #define BLACK_HOLE false             // true or false
 #define BLACK_HOLE_MASS_FACTOR 10000 // veces de la masa mayor del sistema
 
-#define PARTY_TIME true  // true or false
+#define PARTY_TIME true // true or false
+#define EASTER_EGG true // true or false
+
 /**********************************************************************/
 /**************************ARCHITECT'S CONSOLE*************************/
 /**********************************************************************/
@@ -61,8 +65,13 @@ struct OrbitalSim
     OrbitalBody **bodies;
 };
 
+// Makes an orbital simulation, with a given update timestep
 OrbitalSim *makeOrbitalSim(float timeStep);
+
+// Updates a given orbital simulation
 void updateOrbitalSim(OrbitalSim *sim);
+
+// Destroys a given orbital simulation
 void freeOrbitalSim(OrbitalSim *sim);
 
 #endif

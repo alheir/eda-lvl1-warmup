@@ -25,11 +25,19 @@
  *      cálculos: "si calculo para el Sol comparando con los otros cuerpos, también guardo 'los otros cuerpos
  *      vs. el Sol', con el signo cambiado". Luego, se redujo la complejidad de los problemas anteriormente
  *      mencionados, solucionando problemas relacionados con los cuellos de botella en la parte gráfica y la
- *      parte de cálculo. En ambos casos, la clave se encuentra en  despreciar la masa de los asteroides en 
+ *      parte de cálculo. En ambos casos, la clave se encuentra en  despreciar la masa de los asteroides en
  *      comparación con la del resto de los cuerpos celestes; decidimos que graficar los asteroides con un
  *      punto ("DrawPoint3D()") era suficiente, y que la interacción que pueden llegar a tener con el resto de
- *      los planetas y entre sí no es significante. Es decir, no se calculan las fuerzas gravitacionales de 
+ *      los planetas y entre sí no es significante. Es decir, no se calculan las fuerzas gravitacionales de
  *      los asteroides entre asteroides.
+ *
+ * CITAS:
+ *      -Ayudante Martín Zahnd:
+ *          Ayuda/guía en la etapa de optimización del código para soportar más asteroides y con mayor
+ *          rendimiento, haciéndonos concluir que las masas de los asteroides son insignificantes antes
+ *          la de las estrellas y planetas.
+ *          Los cambios realizados a partir de estos figuran líneas arriba, en "Sobre solución de lo anterior"
+ *
  */
 
 #include "orbitalSim.h"
@@ -40,55 +48,32 @@
 #define GRAVITATIONAL_CONSTANT 6.6743E-11F
 #define ASTEROIDS_MEAN_RADIUS 4E11F
 
-// Gets a random value between min and max
-float getRandomFloat(float min, float max)
-{
-    return min + (max - min) * rand() / (float)RAND_MAX;
-}
+/**
+ * @brief Get a random flot between min and max
+ *
+ * @param min
+ * @param max
+ * @return float
+ */
+float getRandomFloat(float min, float max);
 
-// Gets a random unsigned char value between min and max
-unsigned char getRandomUChar(unsigned char min, unsigned max)
-{
-    return min + (max - min) * rand() / (unsigned char)RAND_MAX;
-}
+/**
+ * @brief Get a random unsigned char between min and max
+ *
+ * @param min
+ * @param max
+ * @return unsigned char
+ */
+unsigned char getRandomUChar(unsigned char min, unsigned max);
 
-// Places an asteroid
-//
-// centerMass: mass of the most massive object in the star system
-void placeAsteroid(OrbitalBody *body, float centerMass)
-{
-    // Logit distribution
-    float x = getRandomFloat(0, 1);
-    float l = logf(x) - logf(1 - x) + 1;
+/**
+ * @brief Place an asteroid in the planetary system simulation
+ *
+ * @param body Pointer to a OrbitalBody structure to store asteroid data
+ * @param centerMass Mass of the most massive object in the planetary system
+ */
+void placeAsteroid(OrbitalBody *body, float centerMass);
 
-    // https://mathworld.wolfram.com/DiskPointPicking.html
-    float r = ASTEROIDS_MEAN_RADIUS * sqrtf(fabs(l));
-    float phi = getRandomFloat(0, 2 * 3.14);
-
-    // Surprise!
-    // phi = 0;
-
-    // https://en.wikipedia.org/wiki/Circular_orbit#Velocity
-    float v = sqrtf(GRAVITATIONAL_CONSTANT * centerMass / r) * getRandomFloat(0.6F, 1.2F);
-    float vy = getRandomFloat(-1E2F, 1E2F);
-
-    // Fill in with your own fields:
-    body->mass = 1E12F;  // Typical asteroid weight: 1 billion tons
-    body->radius = 2E3F; // Typical asteroid radius: 2km
-    body->position = { r * cosf(phi), 0, r * sinf(phi) };
-
-    if (PARTY_TIME)
-        body->color = {getRandomUChar(0, 255), getRandomUChar(0, 255), getRandomUChar(0, 255), 126};
-
-
-    else
-        body->color = GRAY;
-
-
-    body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};
-}
-
-// Make an orbital simulation
 OrbitalSim *makeOrbitalSim(float timeStep)
 {
     int i;
@@ -97,7 +82,6 @@ OrbitalSim *makeOrbitalSim(float timeStep)
     OrbitalSim *tempOrbitalSim = NULL;
     OrbitalBody **bodies = NULL;
     EphemeridesBody *systemInfo;
-
 
     switch (CHOSEN_SYSTEM)
     {
@@ -162,54 +146,25 @@ OrbitalSim *makeOrbitalSim(float timeStep)
             return NULL;
         }
 
-        // Se coloca al blackhole como primer cuerpo del sistema,
-        // debiendo alterar los índices.
-        if (BLACK_HOLE)
+        if (BLACK_HOLE && (i == systemBodyNumCore - 1))
         {
-            // Cuerpos principales del sistema (no asteroides)
-            if (i < systemBodyNumCore)
-            {
+            *(bodies[i]) = blacky;
+        }
 
-                if (!i)
-                {
-                    *(bodies[0]) = blacky;
-                }
-
-                else
-                {
-                    *(bodies[i]) = {systemInfo[i - 1].position,
-                                    systemInfo[i - 1].velocity,
-                                    Vector3Zero(),
-                                    systemInfo[i - 1].mass,
-                                    systemInfo[i - 1].radius,
-                                    systemInfo[i - 1].color};
-                }
-            }
-
-            else
-            {
-                placeAsteroid(bodies[i], bodies[1]->mass);
-            }
+        // Cuerpos principales del sistema (no asteroides)
+        else if (i < systemBodyNumCore)
+        {
+            *(bodies[i]) = {systemInfo[i].position,
+                            systemInfo[i].velocity,
+                            Vector3Zero(),
+                            systemInfo[i].mass,
+                            systemInfo[i].radius,
+                            systemInfo[i].color};
         }
 
         else
         {
-            // Cuerpos principales del sistema (no asteroides)
-            if (i < systemBodyNumCore)
-            {
-
-                *(bodies[i]) = {systemInfo[i].position,
-                                systemInfo[i].velocity,
-                                Vector3Zero(),
-                                systemInfo[i].mass,
-                                systemInfo[i].radius,
-                                systemInfo[i].color};
-            }
-
-            else
-            {
-                placeAsteroid(bodies[i], bodies[0]->mass);
-            }
+            placeAsteroid(bodies[i], bodies[0]->mass);
         }
     }
 
@@ -227,13 +182,6 @@ void updateOrbitalSim(OrbitalSim *sim)
     {
         sim->bodies[i]->acceleration = Vector3Zero();
     }
-
-    // Se calculan las fuerzas gravitacionales entre cuerpos, considerando solo las masas
-    // de planetas y estrellas como "fuentes gravitacionales", ignorando efectos de
-    // otros cuerpos menores.
-    //
-    // Referencias:
-    //     -Ayudante Martín Zahnd
 
     for (i = 0; i < sim->bodyNumCore; i++)
     {
@@ -288,4 +236,44 @@ void freeOrbitalSim(OrbitalSim *sim)
 
     free(sim->bodies);
     free(sim);
+}
+
+float getRandomFloat(float min, float max)
+{
+    return min + (max - min) * rand() / (float)RAND_MAX;
+}
+
+unsigned char getRandomUChar(unsigned char min, unsigned max)
+{
+    return min + (max - min) * rand() / (unsigned char)RAND_MAX;
+}
+
+void placeAsteroid(OrbitalBody *body, float centerMass)
+{
+    // Logit distribution
+    float x = getRandomFloat(0, 1);
+    float l = logf(x) - logf(1 - x) + 1;
+
+    // https://mathworld.wolfram.com/DiskPointPicking.html
+    float r = ASTEROIDS_MEAN_RADIUS * sqrtf(fabs(l));
+    float phi = getRandomFloat(0, 2 * 3.14) * !EASTER_EGG;
+
+    // Surprise!
+    // phi = 0;
+
+    // https://en.wikipedia.org/wiki/Circular_orbit#Velocity
+    float v = sqrtf(GRAVITATIONAL_CONSTANT * centerMass / r) * getRandomFloat(0.6F, 1.2F);
+    float vy = getRandomFloat(-1E2F, 1E2F);
+
+    body->mass = 1E12F;  // Typical asteroid weight: 1 billion tons
+    body->radius = 2E3F; // Typical asteroid radius: 2km
+    body->position = {r * cosf(phi), 0, r * sinf(phi)};
+
+    if (PARTY_TIME)
+        body->color = {getRandomUChar(0, 255), getRandomUChar(0, 255), getRandomUChar(0, 255), 126};
+
+    else
+        body->color = GRAY;
+
+    body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};
 }

@@ -14,7 +14,10 @@
 
 #include "orbitalSim.h"
 
+// Renders the 3D views of a given orbital simulation
 void renderOrbitalSim3D(OrbitalSim *sim);
+
+// Renders simulation data
 void renderOrbitalSim2D(OrbitalSim *sim);
 
 #endif

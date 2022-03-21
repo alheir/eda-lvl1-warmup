@@ -34,7 +34,7 @@ int main()
     SetCameraPanControl(MOUSE_BUTTON_LEFT);
 
     // Orbital simulation
-    const float fps = 60.0F;                            // frames per second
+    const float fps = 60.0F;                                        // frames per second
     const float timeMultiplier = DAYS_PER_SECOND * SECONDS_PER_DAY; // Simulation speed: days per real second
     const float timeStep = timeMultiplier / fps;
 
