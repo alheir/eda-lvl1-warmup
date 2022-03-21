@@ -19,14 +19,14 @@ int main()
     raylib::Window window(screenWidth, screenHeight, "EDA Orbital Simulation - C++ Version");
 
     // Camera
-    raylib::Camera camera(raylib::Vector3(4.0f, 2.0f, 4.0f),
-                          raylib::Vector3(0.0f, 1.8f, 0.0f),
+    raylib::Camera camera(raylib::Vector3(10.0f, 10.0f, 10.0f),
+                          raylib::Vector3(0.0f, 0.0f, 0.0f),
                           raylib::Vector3(0.0f, 1.0f, 0.0f),
                           60.0f,
                           CAMERA_PERSPECTIVE);
 
-    // W-A-S-D + mouse to move
-    camera.SetMode(CAMERA_FIRST_PERSON);
+    camera.SetMode(CAMERA_FREE);
+    SetCameraPanControl(MOUSE_BUTTON_LEFT);
 
     // Inicialización default
     // Ver documentación del constructor en el header de la clase para
@@ -38,7 +38,9 @@ int main()
     // Ver documentación del constructor en el header de la clase, o seguir
     // las ayudas/referencias (de existir) del editor de texto al ir ingresando argumentos.
     //
-    OrbitalSim sim(100, SOLAR, 25000, false, true, true, true);
+    // Se llegó a 30FPS con 50000 asteroides, en Linux
+    //
+    OrbitalSim sim(100, SOLAR, 10000, false, false, true, true);
 
     // Game loop
     while (!window.ShouldClose())

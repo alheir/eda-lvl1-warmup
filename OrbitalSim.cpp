@@ -18,10 +18,33 @@
 #define ASTEROIDS_MEAN_RADIUS 4E11F
 
 /* Internal function prototypes */
+
+/**
+ * @brief Get a random float between min and max
+ *
+ * @param min
+ * @param max
+ * @return float
+ */
 float getRandomFloat(float min, float max);
+
+/**
+ * @brief Get a random unsigned char between min and max
+ *
+ * @param min
+ * @param max
+ * @return unsigned char
+ */
 unsigned char getRandomUChar(unsigned char min, unsigned max);
+
+/**
+ * @brief Get a random unsigned char between min and max
+ *
+ * @param min
+ * @param max
+ * @return unsigned char
+ */
 const char *getISODate(float currentTime);
-/* Internal function prototypes */
 
 OrbitalSim::OrbitalSim(int daysPerSec,
                        int system,
@@ -130,106 +153,6 @@ OrbitalSim::~OrbitalSim()
     delete[] bodies;
 }
 
-void OrbitalSim::render3D()
-{
-    for (int i = 0; i < bodyNum; i++)
-    {
-
-        Vector3 position = Vector3Scale(bodies[i].getPosition(), 1E-11F);
-        float radius = logf(bodies[i].getRadius()) * 0.005F;
-        Color color = bodies[i].getColor();
-
-        if (i < bodyNumCore)
-        {
-            DrawSphere(position,
-                       radius,
-                       color);
-        }
-
-        DrawPoint3D(position, color);
-    }
-}
-
-void OrbitalSim::render2D()
-{
-    DrawFPS(0, 0);
-
-    raylib::DrawText(getISODate(time), 0, 25, 14, GOLD);
-
-    raylib::DrawText("Planetary system: ", 0, 45, 14, GOLD);
-    switch (system)
-    {
-    case SOLAR:
-        raylib::DrawText("Solar", 0, 60, 14, GOLD);
-        break;
-
-    case ALPHACENTAURI:
-        raylib::DrawText("Alphacentauri", 0, 60, 14, GOLD);
-        break;
-
-    default:
-        break;
-    }
-
-    raylib::DrawText("Planetary system bodies: ", 0, 80, 14, GOLD);
-    raylib::DrawText(std::to_string(bodyNumCore), 0, 95, 14, GOLD);
-
-    raylib::DrawText("Asteroids: ", 0, 115, 14, GOLD);
-    raylib::DrawText(std::to_string(asteroidsNum), 0, 130, 14, GOLD);
-
-    if (blackHole)
-    {
-        raylib::DrawText("Black hole ON", 0, 150, 14, GREEN);
-    }
-    else
-    {
-        raylib::DrawText("Black hole OFF", 0, 150, 14, GREEN);
-    }
-
-    if (tweakJupiterMass)
-    {
-        raylib::DrawText("Jupiter mass tweak ON", 0, 170, 14, GREEN);
-    }
-    else
-    {
-        raylib::DrawText("Jupiter mass tweak OFF", 0, 170, 14, GREEN);
-    }
-}
-
-void OrbitalSim::placeAsteroid(OrbitalBody &body, float centerMass)
-{
-    // Logit distribution
-    float x = getRandomFloat(0, 1);
-    float l = logf(x) - logf(1 - x) + 1;
-
-    // https://mathworld.wolfram.com/DiskPointPicking.html
-    float r = ASTEROIDS_MEAN_RADIUS * sqrtf(fabs(l));
-    float phi = getRandomFloat(0, 2 * 3.14) * (!easterEgg);
-
-    // Surprise!
-    //
-    // already implemented; see easterEgg variable above
-    //
-    // phi = 0
-
-    // https://en.wikipedia.org/wiki/Circular_orbit#Velocity
-    float v = sqrtf(GRAVITATIONAL_CONSTANT * centerMass / r) * getRandomFloat(0.6F, 1.2F);
-    float vy = getRandomFloat(-1E2F, 1E2F);
-
-    // Fill in with your own fields:
-    body.setMass(1E12F);  // Typical asteroid weight: 1 billion tons
-    body.setRadius(2E3F); // Typical asteroid radius: 2km
-    body.setPosition({r * cosf(phi), 0, r * sinf(phi)});
-
-    if (partyTime)
-        body.setColor({getRandomUChar(0, 255), getRandomUChar(0, 255), getRandomUChar(0, 255), 126});
-
-    else
-        body.setColor(GRAY);
-
-    body.setVelocity({-v * sinf(phi), vy, v * cosf(phi)});
-}
-
 void OrbitalSim::update(float referenceFps)
 {
     // Se hacen coincidir FPS de raylib con los de la cuenta de timeStep para que
@@ -299,6 +222,72 @@ void OrbitalSim::update(float referenceFps)
     }
 }
 
+void OrbitalSim::render3D()
+{
+    for (int i = 0; i < bodyNum; i++)
+    {
+
+        Vector3 position = Vector3Scale(bodies[i].getPosition(), 1E-11F);
+        float radius = logf(bodies[i].getRadius()) * 0.005F;
+        Color color = bodies[i].getColor();
+
+        if (i < bodyNumCore)
+        {
+            DrawSphere(position,
+                       radius,
+                       color);
+        }
+
+        DrawPoint3D(position, color);
+    }
+}
+
+void OrbitalSim::render2D()
+{
+    DrawFPS(0, 0);
+
+    raylib::DrawText(getISODate(time), 0, 25, 14, GOLD);
+
+    raylib::DrawText("Planetary system: ", 0, 45, 14, GOLD);
+    switch (system)
+    {
+    case SOLAR:
+        raylib::DrawText("Solar", 0, 60, 14, GOLD);
+        break;
+
+    case ALPHACENTAURI:
+        raylib::DrawText("Alphacentauri", 0, 60, 14, GOLD);
+        break;
+
+    default:
+        break;
+    }
+
+    raylib::DrawText("Planetary system bodies: ", 0, 80, 14, GOLD);
+    raylib::DrawText(std::to_string(bodyNumCore), 0, 95, 14, GOLD);
+
+    raylib::DrawText("Asteroids: ", 0, 115, 14, GOLD);
+    raylib::DrawText(std::to_string(asteroidsNum), 0, 130, 14, GOLD);
+
+    if (blackHole)
+    {
+        raylib::DrawText("Black hole ON", 0, 150, 14, GREEN);
+    }
+    else
+    {
+        raylib::DrawText("Black hole OFF", 0, 150, 14, GREEN);
+    }
+
+    if (tweakJupiterMass)
+    {
+        raylib::DrawText("Jupiter mass tweak ON", 0, 170, 14, GREEN);
+    }
+    else
+    {
+        raylib::DrawText("Jupiter mass tweak OFF", 0, 170, 14, GREEN);
+    }
+}
+
 float OrbitalSim::getTime()
 {
     return time;
@@ -312,6 +301,40 @@ int OrbitalSim::getBodyNumCore()
 int OrbitalSim::getBodyNum()
 {
     return bodyNum;
+}
+
+void OrbitalSim::placeAsteroid(OrbitalBody &body, float centerMass)
+{
+    // Logit distribution
+    float x = getRandomFloat(0, 1);
+    float l = logf(x) - logf(1 - x) + 1;
+
+    // https://mathworld.wolfram.com/DiskPointPicking.html
+    float r = ASTEROIDS_MEAN_RADIUS * sqrtf(fabs(l));
+    float phi = getRandomFloat(0, 2 * 3.14) * (!easterEgg);
+
+    // Surprise!
+    //
+    // already implemented; see easterEgg variable above
+    //
+    // phi = 0
+
+    // https://en.wikipedia.org/wiki/Circular_orbit#Velocity
+    float v = sqrtf(GRAVITATIONAL_CONSTANT * centerMass / r) * getRandomFloat(0.6F, 1.2F);
+    float vy = getRandomFloat(-1E2F, 1E2F);
+
+    // Fill in with your own fields:
+    body.setMass(1E12F);  // Typical asteroid weight: 1 billion tons
+    body.setRadius(2E3F); // Typical asteroid radius: 2km
+    body.setPosition({r * cosf(phi), 0, r * sinf(phi)});
+
+    if (partyTime)
+        body.setColor({getRandomUChar(0, 255), getRandomUChar(0, 255), getRandomUChar(0, 255), 126});
+
+    else
+        body.setColor(GRAY);
+
+    body.setVelocity({-v * sinf(phi), vy, v * cosf(phi)});
 }
 
 float getRandomFloat(float min, float max)

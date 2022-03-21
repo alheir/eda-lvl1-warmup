@@ -25,7 +25,7 @@ class OrbitalSim
 {
 public:
     /**
-     * @brief Construct a new Orbital Sim object
+     * @brief Construct a new OrbitalSim object
      *
      * @param daysPerSecond a whole nomber greater than 1
      * @param system see PLANETARY_SYSTEM enum
@@ -45,7 +45,13 @@ public:
 
     ~OrbitalSim();
 
+    /**
+     * @brief Actualiza los datos de la simulación, siendo posible redefinir los fps de referencia
+     *
+     * @param referenceFps
+     */
     void update(float referenceFps = 0.0F);
+
     void render3D();
     void render2D();
 
@@ -53,7 +59,6 @@ public:
     float getTime();
     int getBodyNumCore();
     int getBodyNum();
-    bool getPartyTime();
 
 private:
     float timeStep;
@@ -72,6 +77,12 @@ private:
     bool partyTime;
     bool easterEgg;
 
+    /**
+     * @brief Place an asteroid in the simulation
+     *
+     * @param body OrbitalBody object to store asteroid data
+     * @param centerMass Mass of the most massive object in the planetary system
+     */
     void placeAsteroid(OrbitalBody &body, float centerMass);
 };
 
