@@ -19,10 +19,6 @@
  */
 const char *getISODate(float currentTime);
 
-void OrbitalSim::render3D()
-{
-}
-
 /**
  * @brief Renders simulation data
  *
@@ -53,7 +49,7 @@ void OrbitalSimView::render2D(OrbitalSim &sim)
     raylib::DrawText(std::to_string(sim.getBodyNumCore()), 0, 95, 14, GOLD);
 
     raylib::DrawText("Asteroids: ", 0, 115, 14, GOLD);
-    raylib::DrawText(std::to_string(sim.getBodyNum()), 0, 130, 14, GOLD);
+    raylib::DrawText(std::to_string(sim.getBodyNum() - sim.getBodyNumCore()), 0, 130, 14, GOLD);
 
     if (sim.getBlackHoleFlag())
     {
