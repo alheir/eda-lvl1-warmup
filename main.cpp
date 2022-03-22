@@ -10,6 +10,7 @@
  */
 
 #include "OrbitalSim.h"
+#include "OrbitalSimView.h"
 
 int main()
 {
@@ -42,6 +43,8 @@ int main()
     //
     OrbitalSim sim(100, SOLAR, 10000, false, false, true, true);
 
+    OrbitalSimView renderizator;
+
     // Game loop
     while (!window.ShouldClose())
     {
@@ -59,11 +62,11 @@ int main()
             window.ClearBackground(BLACK);
 
             camera.BeginMode();
-            sim.render3D();
+            renderizator.render3D(sim);
             DrawGrid(10, 10.0f);
             camera.EndMode();
 
-            sim.render2D();
+            renderizator.render2D(sim);
         }
 
         EndDrawing();

@@ -1,9 +1,9 @@
 /**
  * @file OrbitalSimView.h
- * @author your name (you@domain.com)
- * @brief
+ * @authors Alejandro Heir, Matías Álvarez
+ * @brief Clase OrbitalSimView, para hacer actualizaciones gráficas de una simulación de sistema planetario
  * @version 0.1
- * @date 2022-03-21
+ * @date 2022-03-22
  *
  * @copyright Copyright (c) 2022
  *
@@ -17,8 +17,8 @@
 class OrbitalSimView
 {
 public:
-    void render2D(const OrbitalSim &sim);
-    void render3D(const OrbitalSim &sim);
+    void render2D(OrbitalSim &sim);
+    void render3D(OrbitalSim &sim);
 
 private:
 };

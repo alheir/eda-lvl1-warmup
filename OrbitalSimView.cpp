@@ -1,9 +1,9 @@
 /**
  * @file OrbitalSimView.cpp
- * @author your name (you@domain.com)
- * @brief
+ * @authors Alejandro Heir, Matías Álvarez
+ * @brief Clase OrbitalSimView, para hacer actualizaciones gráficas de una simulación de sistema planetario
  * @version 0.1
- * @date 2022-03-21
+ * @date 2022-03-22
  *
  * @copyright Copyright (c) 2022
  *
@@ -28,14 +28,14 @@ void OrbitalSim::render3D()
  *
  * @param sim
  */
-void OrbitalSimView::render2D(const OrbitalSim &sim)
+void OrbitalSimView::render2D(OrbitalSim &sim)
 {
     DrawFPS(0, 0);
 
-    raylib::DrawText(getISODate(time), 0, 25, 14, GOLD);
+    raylib::DrawText(getISODate(sim.getTime()), 0, 25, 14, GOLD);
 
     raylib::DrawText("Planetary system: ", 0, 45, 14, GOLD);
-    switch (system)
+    switch (sim.getSystem())
     {
     case SOLAR:
         raylib::DrawText("Solar", 0, 60, 14, GOLD);
@@ -50,12 +50,12 @@ void OrbitalSimView::render2D(const OrbitalSim &sim)
     }
 
     raylib::DrawText("Planetary system bodies: ", 0, 80, 14, GOLD);
-    raylib::DrawText(std::to_string(bodyNumCore), 0, 95, 14, GOLD);
+    raylib::DrawText(std::to_string(sim.getBodyNumCore()), 0, 95, 14, GOLD);
 
     raylib::DrawText("Asteroids: ", 0, 115, 14, GOLD);
-    raylib::DrawText(std::to_string(asteroidsNum), 0, 130, 14, GOLD);
+    raylib::DrawText(std::to_string(sim.getBodyNum()), 0, 130, 14, GOLD);
 
-    if (blackHole)
+    if (sim.getBlackHoleFlag())
     {
         raylib::DrawText("Black hole ON", 0, 150, 14, GREEN);
     }
@@ -64,7 +64,7 @@ void OrbitalSimView::render2D(const OrbitalSim &sim)
         raylib::DrawText("Black hole OFF", 0, 150, 14, GREEN);
     }
 
-    if (tweakJupiterMass)
+    if (sim.getTweakJupiterMassFlag())
     {
         raylib::DrawText("Jupiter mass tweak ON", 0, 170, 14, GREEN);
     }
@@ -79,16 +79,17 @@ void OrbitalSimView::render2D(const OrbitalSim &sim)
  *
  * @param sim
  */
-void OrbitalSimView::render3D(const OrbitalSim &sim)
+void OrbitalSimView::render3D(OrbitalSim &sim)
 {
-    for (int i = 0; i < bodyNum; i++)
+    for (int i = 0; i < sim.getBodyNum(); i++)
     {
+        OrbitalBody tempBody = sim.getOrbitalBody(i);
 
-        Vector3 position = Vector3Scale(bodies[i].getPosition(), 1E-11F);
-        float radius = logf(bodies[i].getRadius()) * 0.005F;
-        Color color = bodies[i].getColor();
+        Vector3 position = Vector3Scale(tempBody.getPosition(), 1E-11F);
+        float radius = logf(tempBody.getRadius()) * 0.005F;
+        Color color = tempBody.getColor();
 
-        if (i < bodyNumCore)
+        if (i < sim.getBodyNumCore())
         {
             DrawSphere(position,
                        radius,

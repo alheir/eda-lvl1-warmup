@@ -1,7 +1,7 @@
 /**
  * @file OrbitalSim.h
  * @authors Alejandro Heir, Matías Álvarez
- * @brief Clase OrbitalSim, para crear una simulación de sistema planetario.
+ * @brief Clase OrbitalSim, para crear y actualizar lógicamente una simulación de sistema planetario.
  * @version 0.1
  * @date 2022-03-15
  *
@@ -59,6 +59,10 @@ public:
     float getTime();
     int getBodyNumCore();
     int getBodyNum();
+    int getSystem();
+    OrbitalBody getOrbitalBody(int bodyNum);
+    bool getTweakJupiterMassFlag();
+    bool getBlackHoleFlag();
 
 private:
     float timeStep;

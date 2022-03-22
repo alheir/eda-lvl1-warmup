@@ -11,7 +11,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 # Sources
-set(SOURCES main.cpp OrbitalSim.cpp OrbitalBody.cpp)
+set(SOURCES main.cpp OrbitalSim.cpp OrbitalSimView.cpp OrbitalBody.cpp)
 
 # Executable
 add_executable(${PROJECT_NAME} ${SOURCES})

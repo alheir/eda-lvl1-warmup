@@ -1,7 +1,7 @@
 /**
  * @file OrbitalSim.cpp
  * @authors Alejandro Heir, Matías Álvarez
- * @brief Clase OrbitalSim, para crear una simulación de sistema planetario.
+ * @brief Clase OrbitalSim, para crear y actualizar lógicamente una simulación de sistema planetario.
  * @version 0.1
  * @date 2022-03-15
  *
@@ -224,6 +224,26 @@ int OrbitalSim::getBodyNumCore()
 int OrbitalSim::getBodyNum()
 {
     return bodyNum;
+}
+
+int OrbitalSim::getSystem()
+{
+    return system;
+}
+
+OrbitalBody OrbitalSim::getOrbitalBody(int bodyNum)
+{
+    return bodies[bodyNum];
+}
+
+bool OrbitalSim::getTweakJupiterMassFlag()
+{
+    return tweakJupiterMass;
+}
+
+bool OrbitalSim::getBlackHoleFlag()
+{
+    return blackHole;
 }
 
 void OrbitalSim::placeAsteroid(OrbitalBody &body, float centerMass)
